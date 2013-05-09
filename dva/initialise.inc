@@ -10,8 +10,16 @@ const HKCR=&H80000000
 
 DVAReg.RootKey=HKCU
 DVAReg.OpenKey("Software\DVA",0)
-SoundsDir=AppDir+"Sounds\"
-SourceDir=AppDir+"Sources\"
+if (DVAReg.ValueExists("SoundsDir") And DirExists(DVAReg.ReadString("SoundsDir"))) Then
+    SoundsDir=DVAReg.ReadString("SoundsDir")
+Else
+    SoundsDir=AppDir+"Sounds\"
+End If
+if (DVAReg.ValueExists("SourceDir") And DirExists(DVAReg.ReadString("SourceDir"))) Then
+    SourceDir=DVAReg.ReadString("SourceDir")
+Else
+    SourceDir=AppDir+"Source\"
+End If
 
 AssnReg.RootKey=HKCR
 AssnReg.OpenKey("\.mva",1)

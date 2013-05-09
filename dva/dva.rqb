@@ -440,7 +440,7 @@ StartProgress.Position=10
         top=50
         Width=200
         height=Parent.ClientHeight-100
-        Directory=AppDir+"Sounds\"
+        Directory=SoundsDir
         OnDblClick=ProcessWadViewDblClick
     end create
     create RichEdit as qrichedit
@@ -630,8 +630,6 @@ dim AutoPlayBString as string
 if FileEnhanced=True and len(dfDefaultDir) then
     SoundsDir=AppDir+"Sounds\"+dfDefaultDir
     if right$(SoundsDir,1) <> "\" then SoundsDir=SoundsDir+"\"
-else
-    SoundsDir=AppDir+"Sounds\"
 end if
 dim AutoPlayCount as integer
 for AutoPlayCount=0 to RichEditA.LineCount
@@ -663,7 +661,6 @@ sub AutoCompile
     '    AutoCompileFileName=AutoCompileSave.Filename
     '    if AutoCompileSave.FilterIndex=1 and ucase$(right$(AutoCompileFileName,4)) <> ".BAT" then AutoCompileFileName = AutoCompileFileName + ".bat"
     '    dim AutoCompileCountB as integer
-    '    SoundsDir=AppDir+"Sounds\"
     '    dim AutoCompileStream as qfilestream
     '    AutoCompileStream.Open(AutoCompileFileName,fmCreate)
     '    dim AutoCompileWriteString as string

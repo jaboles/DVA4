@@ -1,7 +1,9 @@
 sub ViewRefresh
     SetStatus("Busy","Refreshing File List")
-    WadView.Directory=AppDir+"Sounds\"
-    WadView.Update:SetStatus("Ready",)
+    showmessage SoundsDir
+    WadView.Directory=SoundsDir
+    WadView.Update
+    SetStatus("Ready",)
 end sub
 
 sub ViewWordWrap:if RichEdit.WordWrap=False then

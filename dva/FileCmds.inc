@@ -127,8 +127,6 @@ dim BString as string
 if FileEnhanced=True and len(dfDefaultDir) then
     SoundsDir=AppDir+"Sounds\"+dfDefaultDir
     if right$(SoundsDir,1) <> "\" then SoundsDir=SoundsDir+"\"
-else
-    SoundsDir=AppDir+"Sounds\"
 end if
 dim Count as integer
 for Count=0 to RichEdit.LineCount
@@ -164,8 +162,6 @@ sub FileCompile
         if FileEnhanced=True and len(dfDefaultDir) then
             SoundsDir=AppDir+"Sounds\"+dfDefaultDir
             if right$(SoundsDir,1) <> "\" then SoundsDir=SoundsDir+"\"
-        else
-            SoundsDir=AppDir+"Sounds\"
         end if
         CompileStream.Open(CompileFileName,fmCreate)
         CompileStream.WriteLine("@echo off")
@@ -182,8 +178,6 @@ sub FileCompile
         if FileEnhanced=True and len(dfDefaultDir) then
             SoundsDir=AppDir+"Sounds\"+dfDefaultDir
             if right$(SoundsDir,1) <> "\" then SoundsDir=SoundsDir+"\"
-        else
-            SoundsDir=AppDir+"Sounds\"
         end if
         
         dim CompileBinary as string, CompileIconPath as string, CompileLibPath as string, CompileInput as string, CompileOutput as string, CompileBinLib as string
@@ -201,14 +195,16 @@ sub FileCompile
         Compilertext.AddStrings "CompileInput = "+CompileInput,"CompileOutput = "+CompileOutput,"CompileBinLib = "+CompileBinLib
         Compilertext.AddStrings "","Please wait. Compiling bytecode...",""
         CompileStream.Open(CompileInput,fmCreate)
-        CompileStream.writeline("$option bytecode")
+        'CompileStream.writeline("$option bytecode")
         Countc=0
         for CountB=0 to RichEdit.LineCount
             If RichEdit.Line(CountB) <> "" and left$(RichEdit.Line(CountB),1) <> "/" then
                 if fileexists(SoundsDir+rtrim$(ltrim$(RichEdit.Line(CountB)))+".wad") then
                     CompileStream.WriteLine("$resource wav"+str$(CountC)+" as "+chr$(34)+SoundsDir+rtrim$(ltrim$(RichEdit.Line(CountB)))+".wad"+chr$(34))
+                    CompilerText.AddStrings "$resource wav"+str$(CountC)+" as "+chr$(34)+SoundsDir+rtrim$(ltrim$(RichEdit.Line(CountB)))+".wad"+chr$(34)
                 elseif fileexists(SoundsDir+rtrim$(ltrim$(RichEdit.Line(CountB)))+".wav") then
                     CompileStream.WriteLine("$resource wav"+str$(CountC)+" as "+chr$(34)+SoundsDir+rtrim$(ltrim$(RichEdit.Line(CountB)))+".wav"+chr$(34))
+                    CompilerText.AddStrings "$resource wav"+str$(CountC)+" as "+chr$(34)+SoundsDir+rtrim$(ltrim$(RichEdit.Line(CountB)))+".wav"+chr$(34)
                 else
                     Compilertext.Addstrings "Warning, "+RichEdit.Line(CountB)+" not found!"
                 end if
@@ -217,57 +213,57 @@ sub FileCompile
         next
         for CountB=0 to CountC-1
             CompileStream.writeline("playwav wav"+str$(CountB)+",0")
+            CompilerText.AddStrings "playwav wav"+str$(CountB)+",0" 
         next
         CompileStream.Close
         if fileexists("out.txt") then kill "out.txt"
         dim CCommandstring as string
-        CCommandstring="-r -I"+qt+CompileIconPath+qt+" "
-        CCommandstring=CCommandstring+"-L"+qt+CompileLibPath+qt+" "
+        CCommandstring="-I"+GetShortFileName(CompileIconPath)+" "
+        CCommandstring=CCommandstring+"-L"+GetShortFileName(CompileLibPath)+" "
         CCommandstring=CCommandstring+"-GUI -opt -vON " 
         CCommandstring=CCommandstring+qt+CompileInput+qt+" "
-        CCommandstring=CCommandstring+qt+CompileFileName+qt+" "
+        'CCommandstring=CCommandstring+qt+CompileFileName+qt+" "
         'CCommandstring=replacesubstr$(CCommandstring,"\","/")
+        CompilerText.AddStrings "", "Command Line:", CCommandString
         deflng cpid=shell(qt+AppDir+"rc.exe"+qt+" "+CCommandstring,0)
-        WaitForSingleObject(cpid,&HFFFF)
-        'showmessage CCommandstring
+        CompilerText.AddStrings "Process id: " + str$(cpid)
+        'WaitForSingleObject(cpid,&HFFFF)
+        CompilerText.AddStrings "", "Compiled to: " + CompileFileName
         'ShellExecute(0,"open",qt+AppDir+"rc.exe"+qt,CCommandstring,"",0)
         'shell qt+AppDir+"rc.exe"+qt+" "+CCommandstring
-        dim Creadoutput as qfilestream, CdoTxt as string, CroTxt as string
-        Creadoutput.open(AppDir+ "dump.$$$",fmOpenRead)
-        CroTxt = Creadoutput.ReadStr(Creadoutput.size)
-        Creadoutput.close
-        kill "dump.$$$"
-        CompilerText.text=CompilerText.text+CroTxt+cr
-        CompilerForm.Repaint
-        sleep 0.5
-        CompilerText.AddStrings "Bytecoding done!","Loading bytecode library..."
-        CompilerForm.Repaint
+        'dim Creadoutput as qfilestream, CdoTxt as string, CroTxt as string
+        'Creadoutput.open(AppDir+ "dump.$$$",fmOpenRead)
+        'CroTxt = Creadoutput.ReadStr(Creadoutput.size)
+        'Creadoutput.close
+        'kill "dump.$$$"
+        'CompilerText.text=CompilerText.text+CroTxt+cr
+        'CompilerForm.Repaint
         
-        dim CByteCode as string, CLibCode as string, CExeCode as string
-        Compilestream.Open(CompileBinLib,fmOpenRead)
-        CLibCode=Compilestream.readstr(Compilestream.size)
-        Compilestream.close
-        sleep 0.2
-        CompilerText.AddStrings "Loaded.","Loading bytecode output..."
+        'dim CByteCode as string, CLibCode as string, CExeCode as string
+        'Compilestream.Open(CompileBinLib,fmOpenRead)
+        'CLibCode=Compilestream.readstr(Compilestream.size)
+        'Compilestream.close
+        'sleep 0.2
+        'CompilerText.AddStrings "Loaded.","Loading bytecode output..."
+        'CompilerForm.Repaint
+        'CompileStream.Open(CompileFileName,fmOpenRead)
+        'CByteCode=CompileStream.readstr(Compilestream.size)
+        'CompileStream.close
+        'sleep 0.3
+        'CompilerText.AddStrings "Loaded.","Writing EXE output..."
+        'CompilerForm.Repaint
+        'Compilestream.open(Compilefilename,fmcreate)
+        'Compilestream.writestr(CLibCode,len(CLibCode)-1)
+        'CompileStream.writestr(CByteCode,len(CByteCode)-1)
+        'CompileStream.Close
+        'sleep 0.2
+        'CompilerText.AddStrings "Written.","","Compilation completed!!!"
         CompilerForm.Repaint
-        CompileStream.Open(CompileFileName,fmOpenRead)
-        CByteCode=CompileStream.readstr(Compilestream.size)
-        CompileStream.close
-        sleep 0.3
-        CompilerText.AddStrings "Loaded.","Writing EXE output..."
-        CompilerForm.Repaint
-        Compilestream.open(Compilefilename,fmcreate)
-        Compilestream.writestr(CLibCode,len(CLibCode)-1)
-        CompileStream.writestr(CByteCode,len(CByteCode)-1)
-        CompileStream.Close
-        sleep 0.2
-        CompilerText.AddStrings "Written.","","Compilation completed!!!"
-        CompilerForm.Repaint
-        sleep 3
-        CompilerForm.Close
-        kill CompileInput
-        kill "run.bat"
-        kill "out.txt"
+        'sleep 3
+        'CompilerForm.Close
+        'kill CompileInput
+        'kill "run.bat"
+        'kill "out.txt"
         EndOfCompile:
      end if
      SetStatus("Ready",)

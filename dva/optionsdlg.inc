@@ -85,7 +85,6 @@ create OptionsLocationsPage as qpanel
         create OptionsLocationsPrintOutputEdit as qedit:top=245:left=1:Width=390:end create
 end create
 '--------------------- Appearance Panel
-showmessage
 create OptionsAppearancePage as qpanel
         BevelOuter=bvNone:Visible=False:Left=228:Top=28:Width=410:Height=280:Parent=OptionsPreferencesDlg
         create OptionsAppearancePicture as qimage:ICOn=AppDir+"images\appearance.ico":end create
@@ -141,8 +140,10 @@ end if:end sub
 sub SaveOptions
 SetStatus("Busy","Storing Options")
 PreviousToolbarSettingLarge=DVAReg.ReadInteger("ToolbarSize"):PreviousToolbarSettingFlat=DVAReg.ReadInteger("ToolbarFlat")
-DVAReg.WriteString("SoundsDir",OptionsLocationsSoundsDirTree.Directory)
-DVAReg.WriteString("SourceDir",OptionsLocationsSourcesDirTree.Directory)
+SoundsDir = OptionsLocationsSoundsDirTree.Directory
+DVAReg.WriteString("SoundsDir",SoundsDir)
+SourceDir = OptionsLocationsSourcesDirTree.Directory
+DVAReg.WriteString("SourceDir",SourceDir)
 DVAReg.WriteString("PrintOutput",OptionsLocationsPrintOutputEdit.Text)
 DVAReg.WriteInteger("SplashScreen",OptionsAppearanceSplashScreenOnStartup.Checked)
 DVAReg.WriteInteger("ToolbarVisible",OptionsAppearanceToolbar.Checked)
@@ -189,8 +190,8 @@ end sub
 '----------------------- LoadOptions Code
 sub LoadOptions
 SetStatus("Busy","Retrieving Options")
-OptionsLocationsSoundsDirTree.Directory=AppDir+"Sounds\"
-OptionsLocationsSourcesDirTree.Directory=AppDir+"Sources\"
+OptionsLocationsSoundsDirTree.Directory=SoundsDir
+OptionsLocationsSourcesDirTree.Directory=SourceDir
 OptionsLocationsPrintOutputEdit.Text=DVAReg.ReadString("PrintOutput")
 OptionsAppearanceSplashScreenOnStartup.Checked=DVAReg.ReadInteger("SplashScreen")
 OptionsAppearanceToolbar.Checked=DVAReg.ReadInteger("ToolbarVisible")
