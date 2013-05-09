@@ -1,0 +1,42 @@
+:Base DVA Help.hlp
+:Title DVA Help
+1 About DVA =About_DVA
+1 Read Me=Read_Me@Readme.hlp
+1 License Agreement=License_Agreement@License.hlp
+1 Introduction to DVA
+2 What is DVA? =What_is_DVA
+2 Past Development =Past_Development
+2 New in DVA 4 =New_in_DVA_4
+1 Operations
+2 Keyboard Shortcut Reference=Keyboard_Shortcut_Reference
+2 Tasks/Procedures
+3 Creating a New File =Creating_a_New_File
+3 Opening a File =Opening_a_File
+3 Saving a File =Saving_a_File
+3 Printing a File =Printing_a_File
+3 Playing a File =Playing_a_File
+3 Compiling a File =Compiling_a_File
+2 Menu Reference
+3 File Menu =File_Menu
+3 Edit Menu =Edit_Menu
+3 View Menu =View_Menu
+3 Search Menu =Search_Menu
+3 Options Menu =Options_Menu
+3 Help Menu =Help_Menu
+2 Dialog Reference
+3 Open Dialog=Open_Dialog
+3 Save As Dialog=Save_As_Dialog
+3 Compile Dialog=Compile_Dialog
+3 Properties Dialog=Properties_Dialog
+3 Find Dialog=Find_Dialog
+3 Replace Dialog=Replace_Dialog
+3 About Dialog=About_Dialog
+3 Save Changes Dialog=Save_Changes_Dialog
+3 Preferences Dialog
+4 Locations=Locations
+4 Appearance=Appearance
+4 Shell=Shell
+1 Technical Information
+2 Creation of DVA=Creation_of_DVA
+2 File Types=File_Types
+2 Version History=Version_History

@@ -1,0 +1,939 @@
+$option icon "dva.ico" 
+'$option bytecode
+Const cr=CHR$(13)+chr$(10)
+CONST Header="DVA00.41"
+const qt=chr$(34)
+
+
+CONST GWL_WNDPROC = -4
+
+CONST BDR_RAISEDOUTER = &H0001
+CONST BDR_RAISEDINNER = &H0004
+CONST BDR_SUNKENOUTER = &H0002
+CONST BDR_SUNKENINNER = &H0008
+CONST BDR_RAISED = BDR_RAISEDOUTER OR BDR_RAISEDINNER
+CONST BDR_SUNKEN = BDR_SUNKENOUTER OR BDR_SUNKENINNER
+
+CONST BF_LEFT = &H0001
+CONST BF_TOP = &H0002
+CONST BF_RIGHT = &H0004
+CONST BF_BOTTOM = &H0008
+CONST BF_RECT = BF_LEFT OR BF_TOP OR BF_RIGHT OR BF_BOTTOM
+CONST BF_MIDDLE = &H0800
+CONST BF_SOFT = &H1000
+
+CONST SM_CXFRAME = 32
+CONST SM_CYFRAME = 33
+CONST SM_CXSIZE = 30
+CONST SM_CYSIZE = 31
+
+CONST PS_SOLID = 0
+
+CONST NIM_ADD = 0
+CONST NIM_MODIFY = 1
+CONST NIM_DELETE = 2
+CONST NIM_MESSAGE = 1
+CONST NIM_ICON = 2
+CONST NIM_TIP = 4
+
+CONST WM_PAINT = &H000F
+CONST WM_LBUTTONDOWN = &H201
+CONST WM_NCACTIVATE = &H0086
+CONST WM_NCPAINT = &H0085
+CONST WM_NCLBUTTONDOWN = &H00A1
+CONST WM_NCLBUTTONUP = &H00A2
+CONST WM_USER = &H400
+CONST WM_TRAYICON = WM_USER + 400
+
+CONsT WM_UNDO = &H304
+
+
+
+TYPE TreeNodeType
+    Text AS STRING
+    ImageIndex AS INTEGER
+    StateIndex AS INTEGER
+    SelectedIndex AS INTEGER
+    Count AS INTEGER '' Read only
+    Level AS INTEGER '' Read only
+    IsVisible AS INTEGER '' Read only
+    Handle AS INTEGER '' Read only
+    HasChildren AS INTEGER
+    Selected AS INTEGER
+END TYPE 
+
+type DVAFile0040
+    Header as string * 6
+    Title as string * 64
+    Author as string * 64
+    Comments as string * 1024
+    DefaultDir as string * 256
+    contents as string * 2048
+end type
+
+dim dfHeader as string
+dim dflTitle as short
+dim dfTitle as string
+dim dflAuthor as short
+dim dfAuthor as string
+dim dflComments as integer
+dim dfComments as string
+dim dflDefaultDir as short
+dim dfDefaultDir as string
+dim dflContents as integer
+dim dfContents as string
+
+create Font as qfont
+    Name="Tahoma"
+    Size=8
+end create
+create YellowFont as qfont
+    Name="Tahoma"
+    Size=8
+    Color=&H00FFFF
+end create
+
+
+declare sub DummyProc
+declare sub FileNew
+declare sub FileOpen
+declare sub FilePlay
+declare sub FileCompile
+declare sub FileSave
+declare sub FileSaveAs
+declare sub FilePrint
+declare sub FileProperties
+declare sub FileCheckForUpdate
+declare sub FileExit
+declare sub EditUndo
+declare sub EditCut
+declare sub EditCopy
+declare sub EditPaste
+declare sub EditSelectAll
+declare sub EditClear
+declare sub ViewRefresh
+declare sub ViewWordWrap
+declare sub ViewFullScreen
+declare sub SearchFind
+declare sub SearchFindNext
+declare sub SearchReplace
+declare sub OptionsPreferences
+declare sub HelpContents
+declare sub HelpIndex
+declare sub HelpAbout
+
+DECLARE SUB ShellExecute LIB "SHELL32" ALIAS "ShellExecuteA" (HWnd AS LONG, lpOperation AS STRING, lpFile AS STRING, lpParameters AS STRING, lpDirectory AS STRING, nShowCmd AS LONG)
+
+declare sub OptionsPreferencesDlgOKButtonClicked
+declare sub OptionsAppearanceFontChangeButtonClicked
+declare sub SaveOptions
+declare sub LoadOptions
+declare sub TreeViewChange (Node as integer, Sender as qtreeview)
+
+declare sub SetStatus(a as string, b as string)
+declare sub OptionsAppearanceToolbarChanged
+declare sub FilePropertiesDlgOKButtonClicked
+declare sub AboutDlgOKButtonClicked
+declare sub ReplaceDlgOKButtonClick
+declare sub PromptSaveDlgYesButtonClicked
+declare sub PromptSaveDlgNoButtonClicked
+declare sub ReplaceText(ReplaceFrom as string, ReplaceTo as string)
+declare sub ProcessWadViewDblClick
+declare sub ChangeDir
+declare sub FormResize
+declare sub FindText
+declare sub RichShowXY
+declare sub AutoPlay
+declare sub AutoCompile
+declare sub EveryTime
+declare sub PromptSave
+declare sub SplitterMoved
+declare sub CheckToolbars
+declare sub ClearToolbar
+declare sub ToolbarClick
+declare sub CheckWordWrap
+declare sub SavePropertiesToFile
+declare sub LoadPropertiesFromFile
+declare function FileIsModified() as integer
+declare sub ResetModifiedStatus
+declare sub CheckToDisableProperties
+declare sub SwitchFromFullScreen
+declare sub SwitchToFullScreen
+declare sub DoAutoComplete
+
+declare sub CloseSplashForm
+declare sub DisplaySplashForm
+
+Declare sub LoadDVA00_41
+declare sub LoadDVA4
+
+
+
+DECLARE FUNCTION SetForegroundWindow LIB "user32" ALIAS "SetForegroundWindow" _
+	(HWnd AS LONG) AS LONG
+DECLARE FUNCTION SetWindowLong LIB "user32" ALIAS "SetWindowLongA" _
+	(hWnd AS LONG, nIndex AS LONG, dwNewLong AS LONG) AS LONG
+DECLARE FUNCTION CallWindowProc LIB "user32" ALIAS "CallWindowProcA" _
+	(lpPrevWndFunc AS LONG, hWnd AS LONG, uMsg AS LONG, _
+	wParam AS LONG, lParam AS LONG) AS LONG
+DECLARE FUNCTION GetSystemMetrics LIB "user32" ALIAS "GetSystemMetrics" _
+	(nIndex AS LONG) AS LONG
+DECLARE FUNCTION GetWindowRect LIB "user32" ALIAS "GetWindowRect" _
+	(hWnd AS LONG, lpRect AS QRect) AS LONG
+DECLARE FUNCTION GetWindowDC LIB "user32" ALIAS "GetWindowDC" _
+	(hWnd AS LONG) AS LONG
+DECLARE FUNCTION DrawEdge LIB "user32" ALIAS "DrawEdge" _
+	(hDC AS LONG, qrc AS QRect, edge AS LONG, grfFlags AS LONG) AS LONG
+DECLARE FUNCTION CreatePen LIB "gdi32" ALIAS "CreatePen" _
+	(fnPenStyle AS LONG, nWidth AS LONG, crColor AS LONG) AS LONG
+DECLARE FUNCTION SelectObject LIB "gdi32" ALIAS "SelectObject" _
+	(hDC AS LONG, hGDIObj AS LONG) AS LONG
+DECLARE FUNCTION MoveToEx LIB "gdi32" ALIAS "MoveToEx" _
+	(hDC AS LONG, x AS LONG, y AS LONG, lpPoint AS LONG) AS LONG
+DECLARE FUNCTION LineTo LIB "gdi32" ALIAS "LineTo" _
+	(hDC AS LONG, x AS LONG, y AS LONG) AS LONG
+DECLARE SUB Shell_NotifyIcon LIB "shell32" ALIAS "Shell_NotifyIconA" _
+	(dwMessage AS LONG, NIData AS QNotifyIconData)
+
+DECLARE FUNCTION MainForm_WndProc _
+	(hWnd AS LONG, uMsg AS LONG, wParam AS LONG, lParam AS LONG) AS LONG
+
+Declare Function GetMenu Lib "user32" Alias "GetMenu" (ByVal hwnd As Long) As Long
+
+Declare Function GetSubMenu Lib "user32" Alias "GetSubMenu" (ByVal hMenu As Long, ByVal nPos As Long) As Long
+
+Declare Function GetMenuItemID Lib "user32" Alias "GetMenuItemID" (ByVal hMenu As Long, ByVal nPos As Long) As Long
+
+Declare Function SetMenuItemBitmaps Lib "user32" Alias "SetMenuItemBitmaps" (ByVal hMenu As Long, ByVal nPosition As Long, ByVal wFlags As Long, ByVal hBitmapUnchecked As Long, ByVal hBitmapChecked As Long) As Long
+
+Declare Function WaitForSingleObject Lib "kernel32.dll" Alias "WaitForSingleObject" (hHandle As Long, dwMilliseconds As Long) As Long
+
+
+$include "rapidq.inc"
+
+$include "initialise.inc"
+$include "ShortFileName.inc"
+$include "htmlhelp.inc"
+'$include "flipbook.inc"
+$include "qtoolbar.inc"
+$include "toolbar.inc"
+$include "tflipbook.inc"
+
+' Our largest bitmap is:
+$DEFINE MaxHeight 32
+$DEFINE MaxWidth  32
+
+$DEFINE MaxImages 95
+
+' We want to loop back to the beginning:
+$DEFINE LoopBook
+
+' How many milliseconds should elapse before flipping to next page:
+$DEFINE FlipDelay 110
+
+
+
+
+create EditFont as qfont
+    Name=DVAReg.ReadString("FontName")
+    Size=DVAReg.ReadInteger("FontSize")
+    'Color=DVAReg.ReadInteger("FontColour")
+end create
+
+dim AppVer as string, AppName as string, AppBuild as string, AppDir as string
+AppVer=DVAReg.ReadString("AppVer")
+AppBuild=str$(DVAReg.ReadInteger("AppBuild"))
+AppName=DVAReg.ReadString("AppName")+" "+AppVer
+AppDir=DVAReg.ReadString("AppDir")
+
+dim CurrentFile as DVAFile0040
+dim TestStream as qfilestream
+dim Test as string * 8
+dim FileEnhanced as integer
+dim OpenFilestream as qfilestream
+dim SaveFilestream as qfilestream
+
+dim STFSHeight as integer
+dim STFSWidth as integer
+dim STFSTop as integer
+dim STFSLeft as integer
+dim STFSMaximised as integer
+dim IsFullScreen as integer
+
+dim Filename as string:Filename="Untitled.dva"
+Application.Title=AppName+" - ["+Filename+"]"
+DIM NI AS QNotifyIconData	' tray icon
+
+$include "LoadFiles.inc"
+
+dim HelpDummy as integer
+
+if lcase$(command$(1))="play" and command$(2)<>"" then
+    create InvisibleForm as qform
+        create RichEditA as qrichedit
+            WordWrap=False:Plaintext=true
+        end create
+    end create
+    Filename=command$(2)
+     TestStream.Open(Filename,fmOpenRead)
+     Test=TestStream.Readstr(8)
+     TestStream.Close
+       if lcase$(right$(Filename,3))="dva" and left$(Test,4)="DVA4" then
+            LoadDVA4
+            RichEditA.Text=dfContents
+        elseif lcase$(right$(Filename,3))="dva" and left$(Test,8)="DVA00.41" then
+            LoadDVA00_41
+            RichEditA.Text=dfContents
+        elseif lcase$(right$(Filename,3))="dva" then
+            RichEditA.LoadFromFile(Filename)
+            FileEnhanced=True
+        else
+            RichEditA.LoadFromFile(Filename)
+            FileEnhanced=False
+        end if
+    AutoPlay
+    Application.Terminate
+end if
+
+if lcase$(command$(1))="compile" and command$(2)<>"" then
+    create InvisibleForm2 as qform
+        create RichEditCompile as qrichedit
+            WordWrap=False:Plaintext=true
+        end create
+    end create
+    Filename=command$(2)
+    TestStream.Open(Filename,fmOpenRead)
+     Test=TestStream.Readstr(8)
+     TestStream.Close
+       if lcase$(right$(Filename,3))="dva" and left$(Test,4)="DVA4" then
+            LoadDVA4
+            RichEditCompile.Text=dfContents
+       elseif lcase$(right$(Filename,3))="dva" and left$(Test,8)="DVA00.41" then
+            LoadDVA00_41
+            RichEditCompile.Text=rtrim$(dfContents)
+        elseif lcase$(right$(Filename,3))="dva" then
+            RichEditCompile.LoadFromFile(Filename)
+            FileEnhanced=True
+        else
+            RichEditCompile.LoadFromFile(Filename)
+            FileEnhanced=False
+        end if
+    AutoCompile
+    Application.Terminate
+end if
+
+
+
+dim MainForm as qform
+
+$include "AboutDlg.inc"
+AboutDlg.Parent=MainForm
+
+Create SplashTimer as qtimer
+    interval=1
+    ontimer=DisplaySplashForm
+    enabled=1
+End Create
+
+CREATE CompilerForm AS QFORM
+    Parent=MainForm
+    Caption = "Compiler Output"
+    Width = 600
+    Height = 420
+    Center
+    CREATE CompilerText AS QRICHEDIT
+        align=alClient
+        AddStrings "RichEdit1"
+        ReadOnly=1
+        PlainText=1
+    END CREATE
+END CREATE    
+
+StartProgress.Position=10
+
+    MainForm.OnClose=FileExit'PromptSave
+    MainForm.Height=300
+    MainForm.Width=500
+    MainForm.Center
+    MainForm.Caption=AppName+" - ["+Filename+"]"
+    'WndProc=DummyProc
+    MainForm.Visible=1:MainForm.Visible=0
+    'onresize=FormResize
+    MainForm.Autoscroll=false
+    create MainMenu as qmainmenu
+        Parent=MainForm
+        create FileMenu as qmenuitem
+            caption="&File"
+            create FileNewMenu as qmenuitem
+                caption="&New":shortcut="Ctrl+N":OnClick=FileNew
+            end create
+            create FileOpenMenu as qmenuitem
+                caption="&Open":shortcut="Ctrl+O":OnClick=FileOpen
+            end create
+            create FilePlayMenu as qmenuitem:caption="&Play":Shortcut="F6":OnClick=FilePlay:end create
+            create FileCompileMenu as qmenuitem:caption="&Compile":Shortcut="F7":OnClick=FileCompile:end create
+            create FileSaveMenu as qmenuitem:caption="&Save":shortcut="Ctrl+S":OnClick=FileSave:end create
+            create FileSaveAsMenu as qmenuitem:caption="Save &As...":OnClick=FileSaveAs:end create
+            create FilePrintMenu as qmenuitem:caption="P&rint":shortcut="Ctrl+P":onclick=FilePrint:end create
+            create FileSep1 as qmenuitem:caption="-":end create
+            create FilePropertiesMenu as qmenuitem:caption="Propert&ies":onclick=FileProperties:end create
+            create FileSep2 as qmenuitem:caption="-":end create
+            create FileCheckForUpdateMenu as qmenuitem:caption="Check for &update...":onclick=FileCheckForUpdate:end create
+            create FileSep3 as qmenuitem:caption="-":end create
+            create FileExitMenu as qmenuitem:caption="E&xit":shortcut="Alt+F4":onclick=FileExit:end create
+        end create
+        create EditMenu as qmenuitem
+            Caption="&Edit"
+            create EditUndoMenu as qmenuitem:caption="&Undo":Shortcut="Ctrl+Z":onclick=EditUndo:end create
+            create EditCutMenu as qmenuitem:caption="Cu&t":Shortcut="Ctrl+X":onclick=EditCut:end create
+            create EditCopyMenu as qmenuitem:caption="&Copy":Shortcut="Ctrl+C":onclick=EditCopy:end create
+            create EditPasteMenu as qmenuitem:caption="&Paste":Shortcut="Ctrl+V":onclick=EditPaste:end create
+            create EditSelectAllMenu as qmenuitem:caption="Select &All":Shortcut="Ctrl+A":onclick=EditSelectAll:end create
+            create EditClearMenu as qmenuitem:caption="Cl&ear":Shortcut="Del":onclick=EditClear:end create
+        end create
+        create ViewMenu as qmenuitem
+            caption="&View"
+            create ViewRefreshMenu as qmenuitem:caption="&Refresh":onclick=ViewRefresh:shortcut="F5":end create
+            create ViewWordWrapMenu as qmenuitem:caption="&Word Wrap":checked=False:OnClick=ViewWordWrap:end create
+            create ViewFullScreenMenu as qmenuitem:caption="&Full Screen":OnClick=ViewFullScreen:shortcut="F11":end create
+        end create
+        create SearchMenu as qmenuitem
+            Caption="&Search"
+            create SearchFindMenu as qmenuitem:caption="&Find":Shortcut="Ctrl+F":Onclick=SearchFind:end create
+            create SearchFindNextMenu as qmenuitem:caption="Find &Next":Shortcut="F3":Onclick=SearchFindNext:Enabled=False:end create
+            create SearchReplaceMenu as qmenuitem:caption="&Replace":Shortcut="Ctrl+H":OnClick=SearchReplace:end create
+        end create
+        create OptionsMenu as qmenuitem
+            Caption="&Options"
+            create OptionsPreferencesMenu as qmenuitem:caption="&Preferences...":Onclick=OptionsPreferences:end create
+        end create
+        create HelpMenu as qmenuitem
+            Caption="&Help"
+            create HelpContentsMenu as qmenuitem:caption="&Contents":OnClick=HelpContents:Shortcut="F1":end create
+            create HelpIndexMenu as qmenuitem:caption="&Index":OnClick=HelpIndex:Shortcut="Shift+F1":end create
+            create HelpBreak1Menu as qmenuitem:caption="-":end create
+            create HelpAboutMenu as qmenuitem:caption="&About...":OnClick=HelpAbout:end create
+        end create
+    end create
+   create StatusBar as qstatusbar
+        Parent=MainForm
+	AddPanels "","","",""
+	Panel(0).Width=90
+	Panel(0).Alignment=taCenter
+      Panel(1).Width=60
+      Panel(1).Alignment=taCenter
+      Panel(2).Width=Parent.Width-250
+      
+    end create
+    Create Splitter as qsplitter
+    Parent=MainForm
+        align=alLeft
+        Cursor=crHSplit
+        width=3
+        Beveled=False
+        OnMoved=SplitterMoved
+    end create
+    create WadView as qfilelistbox
+    Parent=MainForm
+        align=alLeft
+        top=50
+        Width=200
+        height=Parent.ClientHeight-100
+        Directory=DVAReg.ReadString("SoundsDir")
+        OnDblClick=ProcessWadViewDblClick
+    end create
+    create RichEdit as qrichedit
+    Parent=MainForm
+        top=50
+        left=WadView.Width+2
+        width=MainForm.ClientWidth-WadView.Width-10
+        ScrollBars = ssBoth
+        PlainText = True
+        WordWrap = False
+        OnKeyUp=Everytime 'DoAutoComplete
+        OnMouseMove=RichShowXY
+        OnMouseDown=RichShowXY
+        OnMouseUp=RichShowXY
+        Modified=False
+    end create
+
+$include "TFlipbookResources.inc"
+
+
+
+
+
+
+t=timer
+
+dim Toolbar as QToolbar
+Toolbar.align=0
+Toolbar.Parent=MainForm
+Toolbar.CButton.Onclick=ToolbarClick
+Toolbar.Hint(btnNew)="New file"
+Toolbar.Hint(btnOpen)="Open a file"
+Toolbar.Hint(btnSave)="Save current file"
+Toolbar.Hint(btnPrint)="Print current file"
+Toolbar.Hint(btnProp)="Show properties of current file"
+Toolbar.Hint(btnRef)="Refresh file list"
+Toolbar.Hint(btnCut)="Cut current selection to clipboard"
+Toolbar.Hint(btnCopy)="Copy current selection to clipboard"
+Toolbar.Hint(btnPaste)="Paste clipboard contents here"
+Toolbar.Hint(btnPrefs)="DVA program preferences"
+Toolbar.Hint(btnHelp)="Help"
+
+StartProgress.Position=30
+    StatusBar.Panel(1).Caption=""
+
+$include "optionsdlg.inc"
+StartProgress.Position=50
+$include "PromptSaveDlg.inc"
+StartProgress.Position=60
+$include "findsystem.inc"
+StartProgress.Position=70
+$include "FileProp.inc"
+StartProgress.Position=80
+'declare sub CheckToDisableProperties
+
+if command$(1)<>"" then
+    Filename=command$(1)
+    TestStream.Open(Filename,fmOpenRead)
+     Test=TestStream.Readstr(8)
+     TestStream.Close
+       if lcase$(right$(Filename,3))="dva" and left$(Test,4)="DVA4" then
+            LoadDVA4
+            RichEdit.Text=dfContents
+        elseif lcase$(right$(Filename,3))="dva" and left$(Test,8)="DVA00.41" then
+            LoadDVA00_41
+            RichEdit.Text=dfContents
+        elseif lcase$(right$(Filename,3))="dva" then
+            RichEdit.LoadFromFile(Filename)
+            FileEnhanced=True
+        else
+            RichEdit.LoadFromFile(Filename)
+            FileEnhanced=False
+        end if
+    ResetModifiedStatus
+    CheckToDisableProperties
+    Application.Title=AppName+" - ["+Filename+"]"
+    MainForm.Caption=AppName+" - ["+Filename+"]"
+end if
+'sleep 0.3
+StartProgress.Position=85
+RichEdit.Font=EditFont
+DEFINT OldWndProc
+OldWndProc = SetWindowLong(MainForm.Handle, GWL_WNDPROC, CODEPTR(MainForm_WndProc))
+StartProgress.Position=90
+'sleep 0.5
+CheckToolbars
+CheckWordWrap
+Toolbar.Load
+StartProgress.Position=95
+'sleep 1
+StartProgress.Position=100
+MainForm.OnResize=FormResize
+if DVAReg.ReadInteger("RememberWindowPosition")=1 and DVAReg.ReadInteger("FullScreen")=0 then
+    if DVAReg.ReadString("MainFormWindowState")="wsMaximized" then
+        MainForm.WindowState=wsMaximized
+    else
+        MainForm.Top=DVAReg.ReadInteger("MainFormTop")
+        MainForm.Left=DVAReg.ReadInteger("MainFormLeft")
+        MainForm.Width=DVAReg.ReadInteger("MainFormWidth")
+        MainForm.Height=DVAReg.ReadInteger("MainFormHeight")
+    end if
+else
+    MainForm.WindowState=wsMaximized
+end if
+
+if DVAReg.ReadInteger("FullScreen")=1 then
+    SwitchToFullScreen
+    ViewFullScreenMenu.Checked=1
+    OptionsAppearanceFullScreen.Checked=1
+end if    
+    
+RichShowXY
+
+
+'create MenuPic as qbitmap
+'    BMP=DVAReg.ReadString("AppDir")+"images\menupic.bmp"
+'end create
+'
+'dim MenuPicHandle as long
+'MenuPicHandle=MenuPic.Handle
+'
+'Dim lngMenu As Long
+'Dim lngSubMenu As Long
+'Dim lngMenuItemID As Long
+'Dim lngRet As Long
+'lngMenu = GetMenu(MainForm.Handle)
+'lngSubMenu = GetSubMenu(lngMenu, 0)
+'lngMenuItemID = GetMenuItemID(lngSubMenu, 1)
+'lngRet = SetMenuItemBitmaps(lngMenu, lngMenuItemID, 0, MenuPicHandle, MenuPicHandle) 
+
+'AboutDlg.Parent=MainForm
+do
+doevents
+loop until SplashformClosed=1
+MainForm.Visible=True:FormResize:MainForm.Visible=False
+MainForm.ShowModal
+
+sub EveryTime
+    If FileIsModified then StatusBar.Panel(1).Caption="Modified" else StatusBar.Panel(1).Caption=""
+    If RichEdit.SelLength=0 then
+        EditCutMenu.Enabled=False
+        EditCopyMenu.Enabled=False
+        EditClearMenu.Enabled=False
+        for ToolDisableCount=1 to Toolbar.Buttons:Toolbar.Enabled(ToolDisableCount)=True:next
+        Toolbar.Enabled(btnCut)=False
+        Toolbar.Enabled(btnCopy)=False
+        Toolbar.Reset
+        EditClearMenu.Shortcut=
+    else
+        EditCutMenu.Enabled=True
+        EditCopyMenu.Enabled=True
+        EditClearMenu.Enabled=True
+        for ToolEnableCount=1 to Toolbar.Buttons:Toolbar.Enabled(ToolEnableCount)=True:next
+        Toolbar.Enabled(btnCut)=True
+        Toolbar.Enabled(btnCopy)=True
+        Toolbar.Reset
+        EditClearMenu.Shortcut="Del"
+    end if
+end sub
+'sub FormResize:WadView.Height=MainForm.ClientHeight-19:RichEdit.Width=MainForm.ClientWidth-200:RichEdit.Height=MainForm.ClientHeight-19:end sub
+'sub formresize:FlipBook.left=Parent.ClientWidth-32:FlipBook.top=Parent.Top:end sub
+sub FormResize:SplitterMoved:Flip.left=MainForm.ClientWidth-36:StatusBar.Panel(2).Width=MainForm.Width-250:SplitterMoved
+    
+end sub
+
+sub SetStatus(a as string, b as string)
+    StatusBar.Panel(3).Caption=a
+    StatusBar.Panel(2).Caption=b
+end sub
+
+
+sub DummyProc:end sub
+
+$include "FileCmds.inc"
+$include "EditCmds.inc"
+$include "ViewCmds.inc"
+$include "HelpCmds.inc"
+
+sub RichShowXY:EveryTime:StatusBar.Panel(0).Caption = "Ln "+STR$(RichEdit.WhereY+1)+", Col "+STR$(RichEdit.WhereX+1):end sub
+sub ProcessWadViewDblClick:RichEdit.Line(RichEdit.WhereY)= left$(RichEdit.Line(RichEdit.WhereY),RichEdit.WhereX)+WadView.Item(WadView.ItemIndex)+right$(RichEdit.Line(RichEdit.WhereY),len(RichEdit.Line(RichEdit.WhereY))-RichEdit.WhereX)-".wad"-".WAD"-".Wad"-".wAd"-".waD"-".WAd"-".wAD"-".WaD"-".wav"-".WAV"-".Wav"-".wAv"-".waV"-".WAv"-".wAV"-".WaV"+chr$(13)+chr$(10):end sub
+
+
+
+sub AutoPlay
+dim AutoPlayAString as string
+dim AutoPlayBString as string
+if FileEnhanced=True and len(dfDefaultDir) then
+    SoundsDir=DVAReg.ReadString("RootSoundsDir")+dfDefaultDir
+    if right$(SoundsDir,1) <> "\" then SoundsDir=SoundsDir+"\"
+else
+    SoundsDir=DVAReg.ReadString("SoundsDir")
+end if
+dim AutoPlayCount as integer
+for AutoPlayCount=0 to RichEditA.LineCount
+AutoPlayAString=rtrim$(ltrim$(RichEditA.Line(AutoPlayCount)))
+AutoPlayBString=SoundsDir+AutoPlayAString+".wad"
+If AutoPlayAString <> "" and left$(AutoPlayAString,1)<>"/" then PLAYWAV(AutoPlayBString, SND_SYNC)
+doevents
+next
+end sub
+
+sub PromptSave
+    if FileIsModified then
+        PromptSaveCaptionPanel.Caption="Save changes to "+Filename+"?"
+        PromptSaveDlgYesButton.Default=1
+        PromptSaveDlg.ShowModal
+    end if
+end sub
+
+sub AutoCompile
+    Showmessage "Not yet implemented."
+    'create AutoCompileSave as qsavedialog
+    '    Caption="Compile As..."
+    '    Filter="MS-DOS Batch File (*.BAT)|*.BAT|All Files (*.*)|*.*"
+    '    FilterIndex=1
+    '    InitialDir=AppDir
+    'end create
+    'If AutoCompileSave.Execute then
+    '    dim AutoCompileFileName as string
+    '    AutoCompileFileName=AutoCompileSave.Filename
+    '    if AutoCompileSave.FilterIndex=1 and ucase$(right$(AutoCompileFileName,4)) <> ".BAT" then AutoCompileFileName = AutoCompileFileName + ".bat"
+    '    dim AutoCompileCountB as integer
+    '    SoundsDir=DVAReg.ReadString("SoundsDir")
+    '    dim AutoCompileStream as qfilestream
+    '    AutoCompileStream.Open(AutoCompileFileName,fmCreate)
+    '    dim AutoCompileWriteString as string
+    '    AutoCompileStream.WriteLine("@echo off")
+    '    AutoCompileStream.WriteLine("echo Compiled DVA File")
+    '    AutoCompileStream.WriteLine("echo.")
+    '    AutoCompileStream.WriteLine("echo Compiled in "+AppName)
+    '    AutoCompileStream.WriteLine("echo Copyright (c) Jonathan Boles 1999-2000")
+    '    for AutoCompileCountB=0 to RichEditCompile.LineCount
+    '        If RichEditCompile.Line(AutoCompileCountB) <> "" and left$(RichEditCompile.Line(AutoCompileCountB),1) <> "/" then AutoCompileStream.WriteLine(chr$(34)+AppDir+"wplay.exe"+chr$(34)+" "+chr$(34)+GetShortFileName(SoundsDir+rtrim$(ltrim$(RichEditCompile.Line(AutoCompileCountB)))+".wad")+chr$(34)+" > nul")
+    '    next
+    '    AutoCompileStream.Close
+    'end if
+end sub   
+
+sub SplitterMoved
+if Toolbar.Visible=True then RichEdit.top=Toolbar.Height+2 else RichEdit.top=0
+RichEdit.left=WadView.Width+2
+RichEdit.width=MainForm.ClientWidth-WadView.Width-2
+RichEdit.Height=MainForm.ClientHeight-RichEdit.Top-19
+Toolbar.Left=WadView.Width+2
+Toolbar.Top=1
+end sub         
+
+sub CheckToolbars
+    if DVAReg.ReadInteger("ToolbarVisible")=0 then
+        flip.visible=False
+        Toolbar.Visible=False
+    else
+        Flip.Visible=True
+        Toolbar.Visible=True
+    end if        
+    ClearToolbar
+    If DVAReg.ReadInteger("ToolbarFlat")=0 then Toolbar.Flat=0 else Toolbar.Flat=1
+            
+If DVAReg.ReadInteger("ToolbarSize")=1 then
+            Toolbar.imglHandle=Limgs.handle
+		Toolbar.imglDHandle=LimgsD.handle
+	else  
+		Toolbar.imglHandle=Simgs.handle
+		Toolbar.imglDHandle=SimgsD.handle
+	end if
+end sub
+
+sub ClearToolbar
+    with Toolbar
+        ButtonX=
+        ShowHint=           
+        Flat=               'Flat buttons or not
+   imglHandle=       'Handle 
+   imglDHandle=      'Handel 2
+
+'Private
+   imgl1=         'Active buttton
+   imgl2=         'Disabel button
+   img=              'on paint Buttons 
+   Butbmp=           'our False button
+   CButton=         ' one real button
+   Buttons=          'Number of buttons
+   X=                'Height of bmp
+   Y=  
+end sub
+
+sub ToolbarClick
+    select case Toolbar.ButtonX
+        case btnNew:FileNew
+        case btnOpen:FileOpen
+        case btnSave:FileSave
+        case btnPrint:FilePrint
+        case btnProp:FileProperties
+        case btnRef:ViewRefresh
+        case btnCut:EditCut
+        case btnCopy:EditCopy
+        case btnPaste:EditPaste
+        case btnPrefs:OptionsPreferences
+        case btnHelp:HelpContents
+    end select
+    Toolbar.Reset
+end sub
+
+sub CheckWordWrap
+    if DVAReg.ReadInteger("WordWrap")=0 then
+        ViewWordWrapMenu.Checked=False
+        RichEdit.WordWrap=False
+    else
+        ViewWordWrapMenu.Checked=True
+        RichEdit.WordWrap=True
+    end if
+end sub
+
+function FileIsModified()
+    
+    if FilePropertiesDlgTitle.Modified=True or FilePropertiesDlgAuthor.Modified=True or FilePropertiesDlgComments.Modified=True or FilePropertiesDlgDefaultDir.Modified=True or RichEdit.Modified=True then FileIsModified=1 else FileIsModified=0
+end function
+
+sub ResetModifiedStatus
+    RichEdit.Modified=False
+    FilePropertiesDlgTitle.Modified=False
+    FilePropertiesDlgAuthor.Modified=False
+    FilePropertiesDlgComments.Modified=False
+    FilePropertiesDlgDefaultDir.Modified=False
+    if FileIsModified then StatusBar.Panel(1).Caption="Modified" else StatusBar.Panel(1).Caption=""
+end sub
+
+sub CheckToDisableProperties
+    SetStatus("Busy","Checking File Properties")
+    if FileEnhanced=True then
+        FilePropertiesDlgTitle.Enabled=True
+        FilePropertiesDlgAuthor.Enabled=True
+        FilePropertiesDlgComments.Enabled=True
+        FilePropertiesDlgDefaultDir.Enabled=True
+        FilePropertiesDlgTitle.Color=clWindow
+        FilePropertiesDlgAuthor.Color=clWindow
+        FilePropertiesDlgComments.Color=clWindow
+        FilePropertiesDlgDefaultDir.Color=clWindow
+    else
+        FilePropertiesDlgTitle.Color=clBtnFace
+        FilePropertiesDlgAuthor.Color=clBtnFace
+        FilePropertiesDlgComments.Color=clBtnFace
+        FilePropertiesDlgDefaultDir.Color=clBtnFace
+        FilePropertiesDlgTitle.Enabled=False
+        FilePropertiesDlgAuthor.Enabled=False
+        FilePropertiesDlgComments.Enabled=False
+        FilePropertiesDlgDefaultDir.Enabled=False
+    end if
+end sub
+
+sub PromptSaveDlgYesButtonClicked
+PromptSaveDlg.Close
+FileSave
+end sub
+
+sub PromptSaveDlgNoButtonClicked
+PromptSaveDlg.Close
+end sub
+
+
+FUNCTION MainForm_WndProc(hWnd AS LONG, uMsg AS LONG, wParam AS LONG, lParam AS LONG) AS LONG
+	STATIC Pushed AS LONG	' state of the dot button
+	DIM Rect AS QRect
+	SELECT CASE uMsg
+	CASE WM_NCLBUTTONDOWN
+		GetWindowRect(MainForm.Handle, Rect)
+    	' Extract cursor position
+		DEFINT x = (lParam AND &HFFFF)
+		DEFINT y = (lParam SHR 16)
+    	' Calculate position of the button
+    	' and check whether it was clicked
+		Rect.Left = Rect.Right - GetSystemMetrics(SM_CXFRAME) - _
+			GetSystemMetrics(SM_CXSIZE) * 4 + 1
+		Rect.Top = Rect.Top + GetSystemMetrics(SM_CYFRAME) + 2
+		Rect.Right = Rect.Left + GetSystemMetrics(SM_CXSIZE) - 1
+		Rect.Bottom = Rect.Top + GetSystemMetrics(SM_CYSIZE) - 4
+		IF x >= Rect.Left AND x <= Rect.Right AND _
+				y >= Rect.Top AND y <= Rect.Bottom THEN
+			' OK, so it was; change the state
+			' and redraw the button
+			Pushed = True
+			SendMessage(MainForm.Handle, WM_NCPAINT, 0, 0)
+			result = 0
+		ELSE
+			' If it wasn't, let Windows handle the message
+		    result = CallWindowProc(OldWndProc, hWnd, uMsg, wParam, lParam)
+		END IF
+	CASE WM_NCLBUTTONUP
+		' Let Windows handle it...
+		result = CallWindowProc(OldWndProc, hWnd, uMsg, wParam, lParam)
+		' If mouse button was pressed and then released...
+		IF Pushed THEN
+			' ... we've got a click, so let's hide the form
+			' and put an icon in the tray
+			Pushed = False
+			MainForm.Visible = False
+			NI.hWnd = MainForm.Handle
+			NI.uID = Application.hInstance
+			NI.uFlags = NIM_ICON OR NIM_MESSAGE OR NIM_TIP
+			NI.hIcon = Application.Icon
+			NI.uCallbackMessage = WM_TRAYICON
+			NI.szTip = "Click to show window"
+			Shell_NotifyIcon(NIM_ADD, NI)
+		END IF
+	CASE WM_TRAYICON
+        IF (lParam AND &HFFFF) = WM_LBUTTONDOWN THEN
+			' Tray icon was clicked, so show the
+			' window and put it on top
+			Shell_NotifyIcon(NIM_DELETE, NI)
+        	MainForm.Visible = True
+        	SetForegroundWindow(MainForm.Handle)
+		END IF
+	CASE WM_NCPAINT, WM_NCACTIVATE
+		' Let Windows draw everything first
+	    result = CallWindowProc(OldWndProc, hWnd, uMsg, wParam, lParam)
+		DEFINT DC = GetWindowDC(MainForm.Handle)
+		' Calculate position of the button
+		' and draw 3D-frame around it
+		GetWindowRect(MainForm.Handle, Rect)
+		Rect.Left = Rect.Right - Rect.Left - GetSystemMetrics(SM_CXFRAME) - _
+			 GetSystemMetrics(SM_CXSIZE) * 4 + 1
+		Rect.Top = GetSystemMetrics(SM_CYFRAME) + 2
+		Rect.Right = Rect.Left + GetSystemMetrics(SM_CXSIZE) - 1
+		Rect.Bottom = Rect.Top + GetSystemMetrics(SM_CYSIZE) - 4
+		DEFINT Border
+		' Depending on whether the button is pushed or not,
+		' draw raised or sunken border
+		IF Pushed THEN Border = BDR_SUNKEN ELSE Border = BDR_RAISED
+		DrawEdge(DC, Rect, Border, BF_RECT OR BF_SOFT OR BF_MIDDLE)
+		' Draw the dot
+		DEFINT PenSize = GetSystemMetrics(SM_CXSIZE) / 7
+		DEFINT Pen = CreatePen(PS_SOLID, PenSize, 0)
+		Pen = SelectObject(DC, Pen)
+		MoveToEx(DC, Rect.Right - PenSize - 3, Rect.Bottom - PenSize - 2, 0)
+		LineTo(DC, Rect.Right - PenSize - 3, Rect.Bottom - PenSize - 2)
+		SelectObject(DC, Pen)
+	CASE ELSE
+		' Other messages are handled by Windows
+	    result = CallWindowProc(OldWndProc, hWnd, uMsg, wParam, lParam)
+	END SELECT
+END FUNCTION
+
+sub SwitchToFullScreen
+If MainForm.WindowState=wsMaximized then
+    STFSMaximised = 1
+    STFSHeight=MainForm.Height
+    STFSWidth=MainForm.Width
+else
+    STFSHeight=MainForm.Height
+    STFSWidth=MainForm.Width
+    STFSTop=MainForm.Top
+    STFSLeft=MainForm.Left
+    MainForm.Top=0
+    MainForm.Left=0
+end if
+MainForm.BorderStyle=bsNone
+MainForm.Height=Screen.Height
+MainForm.Width=Screen.Width
+IsFullScreen=1
+end sub
+
+sub SwitchFromFullScreen
+if STFSMaximised=1 then
+    MainForm.WindowState=wsMaximized
+    MainForm.Height=STFSHeight
+    MainForm.Width=STFSWidth
+else
+    MainForm.Height=STFSHeight
+    MainForm.Width=STFSWidth
+    MainForm.Left=STFSLeft
+    MainForm.Top=STFSTop
+end if
+MainForm.BorderStyle=bsSizeable
+IsFullScreen=0
+end sub
+
+sub DisplaySplashForm
+AboutOKButton.Visible=False
+AussieLogo.Visible=False
+If DVAReg.ReadInteger("SplashScreen")=True then
+    AboutDlg.Show
+    AboutDlg.Repaint
+end if
+if DVAReg.ReadInteger("StartupSound")=True then Playwav DVAReg.ReadString("RootSoundsDir")+"start.wav",SND_ASYNC
+SplashTimer.Interval=3000
+SplashTimer.OnTimer=CloseSplashForm
+end sub
+
+
+sub CloseSplashForm
+    if DVAReg.ReadInteger("SplashScreen")=True then AboutDlg.Close
+    AboutOKButton.Visible=True
+    StartProgress.Visible=False
+    AussieLogo.Visible=True
+    SplashTimer.Enabled=0
+    SplashformClosed=1
+end sub

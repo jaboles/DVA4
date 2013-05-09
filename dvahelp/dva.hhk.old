@@ -1,0 +1,119 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<meta name="GENERATOR" content="Microsoft&reg; HTML Help Workshop 4.1">
+<!-- Sitemap 1.0 -->
+</HEAD><BODY>
+<UL>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="about">
+		<param name="Name" value="'D-V-What?'">
+		<param name="Local" value="overview.htm">
+		<param name="Name" value="About DVA">
+		<param name="Local" value="about.htm">
+		<param name="Name" value="The Great Leap Forward">
+		<param name="Local" value="forward.htm">
+		<param name="Name" value="New in This Version">
+		<param name="Local" value="newfeatures.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="file types">
+		<param name="Name" value="File Types">
+		<param name="Local" value="filetypes.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="information">
+		<param name="Name" value="Technical Information">
+		<param name="Local" value="techinfo.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="keyboard">
+		<param name="Name" value="Keyboard Commands">
+		<param name="Local" value="keyboard.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="menu">
+		<param name="Name" value="Menus in DVA">
+		<param name="Local" value="menus.htm">
+		</OBJECT>
+	<UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="edit">
+			<param name="Name" value="Edit Menu">
+			<param name="Local" value="editmenu.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="file">
+			<param name="Name" value="File Menu">
+			<param name="Local" value="filemenu.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="help">
+			<param name="Name" value="Help Menu">
+			<param name="Local" value="helpmenu.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="options">
+			<param name="Name" value="Options Menu">
+			<param name="Local" value="optionsmenu.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="search">
+			<param name="Name" value="Search Menu">
+			<param name="Local" value="searchmenu.htm">
+			</OBJECT>
+	</UL>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="options">
+		<param name="Name" value="Changing Program Options">
+		<param name="Local" value="changeoptions.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="playing a source">
+		<param name="Name" value="Playing a File">
+		<param name="Local" value="playafile.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="shortcuts">
+		<param name="Name" value="Keyboard Commands">
+		<param name="Local" value="keyboard.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="sources">
+		<param name="Name" value="File Types">
+		<param name="Local" value="filetypes.htm">
+		</OBJECT>
+	<UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="compiling">
+			<param name="Name" value="Compiling a File">
+			<param name="Local" value="compileafile.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="creating">
+			<param name="Name" value="Creating a New File">
+			<param name="Local" value="createafile.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="opening">
+			<param name="Name" value="Opening a File">
+			<param name="Local" value="openafile.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="playing">
+			<param name="Name" value="Playing a File">
+			<param name="Local" value="playafile.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="printing">
+			<param name="Name" value="Printing a File">
+			<param name="Local" value="printafile.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="saving">
+			<param name="Name" value="Saving a File">
+			<param name="Local" value="saveafile.htm">
+			</OBJECT>
+	</UL>
+</UL>
+</BODY></HTML>

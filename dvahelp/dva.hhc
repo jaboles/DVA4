@@ -1,0 +1,218 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<meta name="GENERATOR" content="Microsoft&reg; HTML Help Workshop 4.1">
+<!-- Sitemap 1.0 -->
+</HEAD><BODY>
+<OBJECT type="text/site properties">
+	<param name="Window Styles" value="0x800227">
+</OBJECT>
+<UL>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Introduction to DVA">
+		<param name="Local" value="introduction.htm">
+		<param name="ImageNumber" value="1">
+		</OBJECT>
+	<UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="About DVA">
+			<param name="Local" value="overview.htm">
+			<param name="ImageNumber" value="9">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="The Great Leap Forward">
+			<param name="Local" value="forward.htm">
+			<param name="ImageNumber" value="11">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="New in This Version">
+			<param name="Local" value="newfeatures.htm">
+			<param name="ImageNumber" value="18">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Legal Detritus">
+			<param name="Local" value="legaldetritus.htm">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Copyright Notice">
+				<param name="Local" value="copyrightnotice.htm">
+				<param name="ImageNumber" value="21">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="License Agreement">
+				<param name="Local" value="licenseagreement.htm">
+				<param name="ImageNumber" value="21">
+				</OBJECT>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="DVA Website">
+			<param name="Local" value="http://go.to/dvaonline">
+			<param name="ImageNumber" value="13">
+			</OBJECT>
+	</UL>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Operations">
+		<param name="Local" value="operations.htm">
+		<param name="ImageNumber" value="1">
+		</OBJECT>
+	<UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Tasks/Procedures">
+			<param name="Local" value="procs.htm">
+			<param name="ImageNumber" value="1">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Creating a New File">
+				<param name="Local" value="createafile.htm">
+				<param name="ImageNumber" value="12">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Opening a File">
+				<param name="Local" value="openafile.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Saving a File">
+				<param name="Local" value="saveafile.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Printing a File">
+				<param name="Local" value="printafile.htm">
+				<param name="ImageNumber" value="11">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Playing a File">
+				<param name="Local" value="playafile.htm">
+				<param name="ImageNumber" value="29">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Compiling a File">
+				<param name="Local" value="compileafile.htm">
+				<param name="ImageNumber" value="29">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Changing Program Options">
+				<param name="Local" value="changeoptions.htm">
+				<param name="ImageNumber" value="41">
+				</OBJECT>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Menu Reference">
+			<param name="Local" value="menus.htm">
+			<param name="ImageNumber" value="1">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="File Menu">
+				<param name="Local" value="filemenu.htm">
+				<param name="ImageNumber" value="35">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Edit Menu">
+				<param name="Local" value="editmenu.htm">
+				<param name="ImageNumber" value="35">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="View Menu">
+				<param name="Local" value="viewmenu.htm">
+				<param name="ImageNumber" value="35">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Search Menu">
+				<param name="Local" value="searchmenu.htm">
+				<param name="ImageNumber" value="35">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Options Menu">
+				<param name="Local" value="optionsmenu.htm">
+				<param name="ImageNumber" value="35">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Help Menu">
+				<param name="Local" value="helpmenu.htm">
+				<param name="ImageNumber" value="35">
+				</OBJECT>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Dialog Reference">
+			<param name="Local" value="dlgreference.htm">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Find Dialog">
+				<param name="Local" value="finddlg.htm">
+				<param name="ImageNumber" value="39">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Not Found Dialog">
+				<param name="Local" value="nfdlg.htm">
+				<param name="ImageNumber" value="39">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Preferences Dialog">
+				<param name="Local" value="preferencesdlg.htm">
+				</OBJECT>
+			<UL>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Locations Panel">
+					<param name="Local" value="locationsdlg.htm">
+					<param name="ImageNumber" value="39">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Apperance Panel">
+					<param name="Local" value="appearancedlg.htm">
+					<param name="ImageNumber" value="39">
+					</OBJECT>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Shell Panel">
+					<param name="Local" value="shelldlg.htm">
+					<param name="ImageNumber" value="39">
+					</OBJECT>
+			</UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Properties Dialog">
+				<param name="Local" value="propdlg.htm">
+				<param name="ImageNumber" value="39">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Replace Dialog">
+				<param name="Local" value="replacedlg.htm">
+				<param name="ImageNumber" value="39">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Save Changes Dialog">
+				<param name="Local" value="savechangesdlg.htm">
+				<param name="ImageNumber" value="39">
+				</OBJECT>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Keyboard Shortcuts">
+			<param name="Local" value="keyboard.htm">
+			<param name="ImageNumber" value="19">
+			</OBJECT>
+	</UL>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Technical Information">
+		<param name="Local" value="techinfo.htm">
+		<param name="ImageNumber" value="1">
+		</OBJECT>
+	<UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Creation of DVA">
+			<param name="Local" value="creation.htm">
+			<param name="ImageNumber" value="11">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="File Types">
+			<param name="Local" value="filetypes.htm">
+			<param name="ImageNumber" value="11">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Version History">
+			<param name="Local" value="versionhistory.htm">
+			<param name="ImageNumber" value="11">
+			</OBJECT>
+	</UL>
+</UL>
+</BODY></HTML>

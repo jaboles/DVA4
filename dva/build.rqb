@@ -1,0 +1,44 @@
+$option icon "d:\rq\app.ico"
+$optimize on
+$include "QWinIni.inc"
+$include "rapidq.inc"
+
+
+const HKLM=&H80000002
+const HKCU=&H80000001
+const HKCR=&H80000000
+dim AppVer as string
+dim DVAReg as qregistry
+DVAReg.RootKey=HKCU
+DVAReg.OpenKey("Software\DVA",0)
+AppVer=DVAReg.ReadString("AppVer")
+
+
+create form as qform
+    visible=false
+    create richedit as qrichedit
+        plaintext=1
+        loadfromfile("d:\dvadev\dva.iss")
+    end create
+end create
+
+dim b as integer
+dim s as string
+dim t as string
+b=DVAReg.readinteger("AppBuild")-1
+s="Root: HKCU; Subkey: Software\DVA; ValueType: dword; ValueName: AppBuild; ValueData: "+str$(b)+"; Components: Core_Program_Files"
+t="Root: HKCU; Subkey: Software\DVA; ValueType: dword; ValueName: AppBuild; ValueData: "+str$(b+1)+"; Components: Core_Program_Files"
+richedit.text=ReplaceSubStr$(richedit.text,s,t)
+richedit.savetofile("d:\dvadev\dva.iss")
+b++
+DVAReg.writeinteger("AppBuild",b+1)
+
+if FileExists("d:\www\dva\dva.liv") then kill "d:\www\dva\dva.liv"
+
+Dim Ini as QINI
+    Ini.Load("d:\rq\dva\update.liu")
+    Ini.Write("program","currentversion",AppVer+" "+str$(b+1))
+dim WU as qfilestream
+    WU.Open("d:\www\dva\dva.liv",fmCreate)
+    WU.WriteLine(AppVer+" "+str$(b+1))
+    WU.Close

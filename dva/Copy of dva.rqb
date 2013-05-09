@@ -1,0 +1,713 @@
+
+' DVA ][
+' 
+$resource DVALogo as "..\pictures\dvapic.bmp"
+$resource DVATitle as "..\pictures\dvatitle.bmp"
+$optimize on
+$option icon "dva.ico" 
+'$option bytecode
+declare sub DummyProc
+declare sub FileNew
+declare sub FileOpen
+declare sub FilePlay
+declare sub FileCompile
+declare sub FileSave
+declare sub FileSaveAs
+declare sub FilePrint
+declare sub FileExit
+declare sub EditCut
+declare sub EditCopy
+declare sub EditPaste
+declare sub EditSelectAll
+declare sub EditClear
+declare sub ViewRefresh
+declare sub ViewWordWrap
+declare sub ViewToolbar
+declare sub SearchFind
+declare sub SearchFindNext
+declare sub SearchReplace
+declare sub OptionsSoundsDir
+declare sub OptionsSoundsDirProcess
+declare sub OptionsSoundsDirDlgClose
+declare sub OptionsSourceDir
+declare sub OptionsSourceDirProcess
+declare sub OptionsSourceDirDlgClose
+declare sub OptionsDefaultAction
+declare sub OptionsActionDlgClose
+declare sub OptionsPrintOutput
+declare sub OptionsPrintOutputProcess
+declare sub OptionsPrintOutputDlgClose
+declare sub OptionsLargeToolbarButtons
+declare sub OptionsFlatToolbarButtons
+declare sub HelpContents
+declare sub HelpIndex
+declare sub HelpAbout
+
+DECLARE SUB ShellExecute LIB "SHELL32" ALIAS "ShellExecuteA" (HWnd AS LONG, lpOperation AS STRING, lpFile AS STRING, lpParameters AS STRING, lpDirectory AS STRING, nShowCmd AS LONG)
+
+
+declare sub ProcessActionDlg
+declare sub HelpAboutClose
+declare sub ReplaceDlgOKButtonClick
+declare sub ReplaceText(ReplaceFrom as string, ReplaceTo as string)
+declare sub ProcessWadViewDblClick
+declare sub ChangeDir
+declare sub FormResize
+declare sub FindText
+declare sub RichShowXY
+declare sub AutoPlay
+declare sub AutoCompile
+declare sub EveryTime
+declare sub PromptSave
+declare sub SplitterMoved
+declare sub CheckToolbars
+declare sub ClearToolbar
+declare sub ToolbarClick
+declare sub CheckWordWrap
+
+$include "rapidq.inc"
+$include "initialise.inc"
+$include "ShortFileName.inc"
+$include "htmlhelp.inc"
+'$include "flipbook.inc"
+$include "qtoolbar.inc"
+$include "toolbar.inc"
+$include "tflipbook.inc"
+'$include "flip.inc"
+
+
+dim AppVer as string, AppName as string, AppBuild as string
+AppVer=DVAReg.ReadString("AppVer")
+AppBuild=str$(DVAReg.ReadInteger("AppBuild"))
+AppName=DVAReg.ReadString("AppName")+" "+AppVer
+
+
+dim Filename as string:Filename="Untitled.dva"
+Application.Title=AppName+" - ["+Filename+"]"
+
+dim HelpDummy as integer
+
+dim AppDir as string:AppDir=DVAReg.ReadString("AppDir")
+
+if lcase$(command$(1))="play" and command$(2)<>"" then
+    create InvisibleForm as qform
+        create RichEditA as qrichedit
+            WordWrap=False
+            Plaintext=true
+            LoadFromFile(command$(2))
+        end create
+    end create
+    AutoPlay
+    Application.Terminate
+end if
+
+if lcase$(command$(1))="compile" and command$(2)<>"" then
+    create InvisibleForm2 as qform
+        create RichEditCompile as qrichedit
+            WordWrap=False
+            Plaintext=true
+            LoadFromFile(command$(2))
+        end create
+    end create
+    AutoCompile
+    Application.Terminate
+end if
+
+$include "optionsdlg.inc"
+$include "ActionDlg.inc"
+$include "AboutDlg.inc"
+$include "PrintOutDlg.inc"
+
+AboutOKButton.Visible=False
+AboutDlg.Show
+AboutDlg.Repaint
+StartProgress.Position=10
+t=timer
+
+
+create MainForm as qform
+    OnClose=FileExit'PromptSave
+    Height=300
+    Width=500
+    Center
+    Caption=AppName+" - ["+Filename+"]"
+    'WndProc=DummyProc
+    Visible=1:Visible=0
+    'onresize=FormResize
+    Autoscroll=false
+    create MainMenu as qmainmenu
+        create FileMenu as qmenuitem
+            caption="&File"
+            create FileNewMenu as qmenuitem
+                caption="&New":shortcut="Ctrl+N":OnClick=FileNew
+            end create
+            create FileOpenMenu as qmenuitem
+                caption="&Open":shortcut="Ctrl+O":OnClick=FileOpen
+            end create
+            create FilePlayMenu as qmenuitem
+                caption="&Play":Shortcut="F3":OnClick=FilePlay
+            end create
+            create FileCompileMenu as qmenuitem:caption="&Compile":Shortcut="F4":OnClick=FileCompile:end create
+            create FileSaveMenu as qmenuitem:caption="&Save":shortcut="Ctrl+S":OnClick=FileSave:end create
+            create FileSaveAsMenu as qmenuitem:caption="Save &As...":OnClick=FileSaveAs:end create
+            create FilePrintMenu as qmenuitem:caption="P&rint":shortcut="Ctrl+P":onclick=FilePrint:end create
+            create FileSep1 as qmenuitem:caption="-":end create
+            create FileExitMenu as qmenuitem:caption="Exit":shortcut="Alt+F4":onclick=FileExit:end create
+        end create
+        create EditMenu as qmenuitem
+            Caption="&Edit"
+            create EditCutMenu as qmenuitem:caption="Cu&t":Shortcut="Ctrl+X":onclick=EditCut:end create
+            create EditCopyMenu as qmenuitem:caption="&Copy":Shortcut="Ctrl+C":onclick=EditCopy:end create
+            create EditPasteMenu as qmenuitem:caption="&Paste":Shortcut="Ctrl+V":onclick=EditPaste:end create
+            create EditSelectAllMenu as qmenuitem:caption="Select &All":Shortcut="Ctrl+A":onclick=EditSelectAll:end create
+            create EditClearMenu as qmenuitem:caption="Cl&ear":Shortcut="Del":onclick=EditClear:end create
+        end create
+        create ViewMenu as qmenuitem
+            caption="&View"
+            create ViewRefreshMenu as qmenuitem:caption="&Refresh":onclick=ViewRefresh:shortcut="F5":end create
+            create ViewWordWrapMenu as qmenuitem:caption="&Word Wrap":checked=False:OnClick=ViewWordWrap:end create
+            create ViewToolbarMenu as qmenuitem:caption="&Toolbar":OnClick=ViewToolbar:end create
+        end create
+        create SearchMenu as qmenuitem
+            Caption="&Search"
+            create SearchFindMenu as qmenuitem:caption="&Find":Shortcut="Ctrl+F":Onclick=SearchFind:end create
+            create SearchFindNextMenu as qmenuitem:caption="Find &Next":Shortcut="F3":Onclick=SearchFindNext:Enabled=False:end create
+            create SearchReplaceMenu as qmenuitem:caption="&Replace":Shortcut="Ctrl+H":OnClick=SearchReplace:end create
+        end create
+        create OptionsMenu as qmenuitem
+            Caption="&Options"
+            create OptionsSoundsDirMenu as qmenuitem:caption="&Sounds Directory...":Onclick=OptionsSoundsDir:end create
+            create OptionsSourceDirMenu as qmenuitem:caption="Sour&ce Directory...":Onclick=OptionsSourceDir:end create
+            create OptionsDefaultActionMenu as qmenuitem:caption="Default Shell &Action...":Onclick=OptionsDefaultAction:end create
+            create OptionsPrintOutputMenu as qmenuitem:caption="Set &Print Output...":Onclick=OptionsPrintOutput:end create
+            create OptionsToolbarMenu as qmenuitem:caption="&Toolbar Options"
+                create OptionsLargeToolbarButtonsMenu as qmenuitem:caption="&Large Toolbar Buttons":OnClick=OptionsLargeToolbarButtons:end create
+                create OptionsFlatToolbarButtonsMenu as qmenuitem:caption="&Flat Toolbar Buttons":OnClick=OptionsFlatToolbarButtons:end create
+            end create
+        
+        end create
+        create HelpMenu as qmenuitem
+            Caption="&Help"
+            create HelpContentsMenu as qmenuitem:caption="&Contents":OnClick=HelpContents:Shortcut="F1":end create
+            create HelpIndexMenu as qmenuitem:caption="&Index":OnClick=HelpIndex:Shortcut="Shift+F1":end create
+            create HelpBreak1Menu as qmenuitem:caption="-":end create
+            create HelpAboutMenu as qmenuitem:caption="&About":OnClick=HelpAbout:end create
+        end create
+    end create
+   create StatusBar as qstatusbar
+        Parent=MainForm
+	AddPanels "","",""
+	Panel(0).Width=80
+	Panel(0).Alignment=taCenter
+      Panel(1).Width=60
+      Panel(1).Alignment=taCenter
+    end create
+    Create Splitter as qsplitter
+        align=alLeft
+        Cursor=crHSplit
+        width=3
+        Beveled=False
+        OnMoved=SplitterMoved
+    end create
+    create WadView as qfilelistbox
+        align=alLeft
+        top=50
+        Width=200
+        height=Parent.ClientHeight-100
+        Directory=DVAReg.ReadString("SoundsDir")
+        OnDblClick=ProcessWadViewDblClick
+    end create
+    create RichEdit as qrichedit
+        top=50
+        left=WadView.Width+2
+        width=MainForm.ClientWidth-WadView.Width-10
+        ScrollBars = ssBoth
+        PlainText = True
+        WordWrap = False
+        OnKeyUp=RichShowXY
+        OnMouseMove=RichShowXY
+        Modified=False
+    end create
+    create flip as tflipbook
+        top=0
+                Images(0).BMPHandle = BMP_0
+        Images(1).BMPHandle = BMP_1
+        Images(2).BMPHandle = BMP_2
+        Images(3).BMPHandle = BMP_3
+        Images(4).BMPHandle = BMP_4
+        Images(5).BMPHandle = BMP_5
+        Images(6).BMPHandle = BMP_6
+        Images(7).BMPHandle = BMP_7
+        Images(8).BMPHandle = BMP_8
+        Images(9).BMPHandle = BMP_9
+        Images(10).BMPHandle = BMP_10
+        Images(11).BMPHandle = BMP_11
+        Images(12).BMPHandle = BMP_12
+        Images(13).BMPHandle = BMP_13
+        Images(14).BMPHandle = BMP_14
+        Images(15).BMPHandle = BMP_15
+        Images(16).BMPHandle = BMP_16
+        Images(17).BMPHandle = BMP_17
+        Images(18).BMPHandle = BMP_18
+        Images(19).BMPHandle = BMP_19
+        Images(20).BMPHandle = BMP_20
+        Images(21).BMPHandle = BMP_21
+        Images(22).BMPHandle = BMP_22
+        Images(23).BMPHandle = BMP_23
+        Images(24).BMPHandle = BMP_24
+        Images(25).BMPHandle = BMP_25
+        Images(26).BMPHandle = BMP_26
+        Images(27).BMPHandle = BMP_27
+        Images(28).BMPHandle = BMP_28
+        Images(29).BMPHandle = BMP_29
+        Images(30).BMPHandle = BMP_30
+        Images(31).BMPHandle = BMP_31
+        Images(32).BMPHandle = BMP_32
+        Images(33).BMPHandle = BMP_33
+        Images(34).BMPHandle = BMP_34
+        Images(35).BMPHandle = BMP_35
+        Images(36).BMPHandle = BMP_36
+        Images(37).BMPHandle = BMP_37
+        Images(38).BMPHandle = BMP_38
+        Images(39).BMPHandle = BMP_39
+        Images(40).BMPHandle = BMP_40
+        Images(41).BMPHandle = BMP_41
+        Images(42).BMPHandle = BMP_42
+        Images(43).BMPHandle = BMP_43
+        Images(44).BMPHandle = BMP_44
+        Images(45).BMPHandle = BMP_45
+        Images(46).BMPHandle = BMP_46
+        Images(47).BMPHandle = BMP_47
+        Images(48).BMPHandle = BMP_48
+        Images(49).BMPHandle = BMP_49
+        Images(50).BMPHandle = BMP_50
+        Images(51).BMPHandle = BMP_51
+        Images(52).BMPHandle = BMP_52
+        Images(53).BMPHandle = BMP_53
+        Images(54).BMPHandle = BMP_54
+        Images(55).BMPHandle = BMP_55
+        Images(56).BMPHandle = BMP_56
+        Images(57).BMPHandle = BMP_57
+        Images(58).BMPHandle = BMP_58
+        Images(59).BMPHandle = BMP_59
+        Images(60).BMPHandle = BMP_60
+        Images(61).BMPHandle = BMP_61
+        Images(62).BMPHandle = BMP_62
+        Images(63).BMPHandle = BMP_63
+        Images(64).BMPHandle = BMP_64
+        Images(65).BMPHandle = BMP_65
+        Images(66).BMPHandle = BMP_66
+        Images(67).BMPHandle = BMP_67
+        Images(68).BMPHandle = BMP_68
+        Images(69).BMPHandle = BMP_69
+        Images(70).BMPHandle = BMP_70
+        Images(71).BMPHandle = BMP_71
+        Images(72).BMPHandle = BMP_72
+        Images(73).BMPHandle = BMP_73
+        Images(74).BMPHandle = BMP_74
+        Images(75).BMPHandle = BMP_75
+        Images(76).BMPHandle = BMP_76
+        Images(77).BMPHandle = BMP_77
+        Images(78).BMPHandle = BMP_78
+        Images(79).BMPHandle = BMP_79
+        Images(80).BMPHandle = BMP_80
+        Images(81).BMPHandle = BMP_81
+        Images(82).BMPHandle = BMP_82
+        Images(83).BMPHandle = BMP_83
+        Images(84).BMPHandle = BMP_84
+        Images(85).BMPHandle = BMP_85
+        Images(86).BMPHandle = BMP_86
+        Images(87).BMPHandle = BMP_87
+        Images(88).BMPHandle = BMP_88
+        Images(89).BMPHandle = BMP_89
+        Images(90).BMPHandle = BMP_90
+        Images(91).BMPHandle = BMP_91
+        Images(92).BMPHandle = BMP_92
+        Images(93).BMPHandle = BMP_93
+        Images(94).BMPHandle = BMP_94
+        Execute
+    end create
+end create
+
+dim Toolbar as QToolbar
+Toolbar.align=0
+Toolbar.Parent=MainForm
+Toolbar.CButton.Onclick=ToolbarClick
+Toolbar.Hint(0)="New file"
+Toolbar.Hint(1)="Open a file"
+Toolbar.Hint(2)="Save current file"
+Toolbar.Hint(3)="Help"
+
+
+
+StartProgress.Position=35
+    StatusBar.Panel(1).Caption=""
+
+$include "findsystem.inc"
+
+if command$(1)<>"" then
+    Filename=command$(1)
+    RichEdit.LoadFromFile(command$(1))
+    RichEdit.Modified=False
+    Application.Title=AppName+" - ["+Filename+"]"
+    MainForm.Caption=AppName+" - ["+Filename+"]"
+end if
+sleep 0.3
+StartProgress.Position=40
+sleep 0.8
+StartProgress.Position=60
+StartProgress.Position=80
+sleep 0.5
+CheckToolbars
+CheckWordWrap
+Toolbar.Load
+StartProgress.Position=90
+sleep 1
+StartProgress.Position=100
+sleep 0.1
+AboutDlg.Close
+AboutOKButton.Visible=True
+StartProgress.Visible=False
+'Flipbook.Parent=MainForm
+'Flipbook.top=0
+'Flipbook.left=(MainForm.Width - 35)
+'Flipbook.execute
+MainForm.OnResize=FormResize
+MainForm.WindowState=wsMaximized
+MainForm.Visible=True:FormResize:MainForm.Visible=False
+MainForm.ShowModal
+
+sub EveryTime
+    If RichEdit.Modified then StatusBar.Panel(1).Caption="Modified" else StatusBar.Panel(1).Caption=""
+    If RichEdit.SelLength=0 then
+        EditCutMenu.Enabled=False
+        EditCopyMenu.Enabled=False
+        EditClearMenu.Enabled=False
+        EditClearMenu.Shortcut=
+    else
+        EditCutMenu.Enabled=True
+        EditCopyMenu.Enabled=True
+        EditClearMenu.Enabled=True
+        EditClearMenu.Shortcut="Del"
+    end if
+end sub
+'sub FormResize:WadView.Height=MainForm.ClientHeight-19:RichEdit.Width=MainForm.ClientWidth-200:RichEdit.Height=MainForm.ClientHeight-19:end sub
+'sub formresize:FlipBook.left=Parent.ClientWidth-32:FlipBook.top=Parent.Top:end sub
+sub FormResize:SplitterMoved:Flip.left=MainForm.ClientWidth-36:end sub
+
+sub DummyProc:end sub
+sub FileNew
+    if RichEdit.Modified then PromptSave
+    RichEdit.Clear
+    Filename="Untitled.dva"
+    Application.Title=AppName+" - ["+Filename+"]"
+    MainForm.Caption=AppName+" - ["+Filename+"]"
+    RichEdit.Modified=False
+    StatusBar.Panel(1).Caption=""
+end sub
+sub FileOpen
+    If RichEdit.Modified then PromptSave
+    create OpenDialog as qopendialog
+        caption="Open..."
+        filter="DVA File (*.DVA)|*.DVA|MVA File (*.MVA)|*.MVA|All Files (*.*)|*.*"
+        filterindex=1
+        initialdir=DVAReg.ReadString("SourceDir")
+    end create
+    if OpenDialog.Execute then
+        Filename=OpenDialog.Filename
+        RichEdit.LoadFromFile(Filename)
+        
+        Application.Title=AppName+" - ["+Filename+"]"
+        MainForm.Caption=AppName+" - ["+Filename+"]"
+    end if
+    RichEdit.Modified=False
+    StatusBar.Panel(1).Caption=""
+end sub
+sub FileSave:if Filename="Untitled.dva" then
+    FileSaveAs
+else
+    RichEdit.SaveToFile(Filename)
+    RichEdit.Modified=False
+    StatusBar.Panel(1).Caption=""
+end if:end sub
+sub FileSaveAs
+    create SaveDialog as qsavedialog
+        caption="Save As..."
+        filter="DVA File (*.DVA)|*.DVA|MVA File (*.MVA)|*.MVA|All Files (*.*)|*.*"
+        filterindex=1
+        initialdir=DVAReg.ReadString("SourceDir")
+    end create
+    if SaveDialog.Execute then
+        Filename=SaveDialog.Filename
+        If SaveDialog.filterindex=1 and ucase$(right$(Filename,4)) <> ".DVA" then Filename = Filename+".dva"
+        If SaveDialog.filterindex=2 and ucase$(right$(Filename,4)) <> ".MVA" then Filename = Filename+".mva"
+        RichEdit.SaveToFile(Filename)
+        Application.Title=AppName+" - ["+Filename+"]"
+        MainForm.Caption=AppName+" - ["+Filename+"]"
+        RichEdit.Modified=False
+        StatusBar.Panel(1).Caption=""
+end if
+end sub
+sub FilePrint:RichEdit.SaveToFile(DVAReg.ReadString("PrintOutput")):end sub
+sub ViewRefresh:WadView.Update:end sub
+sub FileExit
+    if RichEdit.Modified then PromptSave
+    MainForm.OnResize=dummyproc
+    Application.Terminate
+end sub
+sub ViewWordWrap:if RichEdit.WordWrap=False then
+        RichEdit.WordWrap=True:ViewWordWrapMenu.Checked=True
+        DVAReg.WriteInteger("WordWrap",1)
+    else
+        RichEdit.WordWrap=False:ViewWordWrapMenu.Checked=False
+        DVAReg.WriteInteger("WordWrap",0)
+    end if:end sub
+sub ViewToolbar
+    if Toolbar.Visible=True then
+        flip.visible=false
+        Toolbar.Visible=False
+        ViewToolbarMenu.Checked=False
+        DVAReg.WriteInteger("ToolbarVisible",0)
+        SplitterMoved
+    else
+        flip.visible=True
+        Toolbar.Visible=True
+        ViewToolbarMenu.Checked=True
+        DVAReg.WriteInteger("ToolbarVisible",1)
+        SplitterMoved
+    end if
+end sub
+sub OptionsSoundsDir:OptionsSoundsDirDlg.Show:end sub
+sub OptionsSoundsDirDlgClose:OptionsSoundsDirDlg.Close:WadView.Directory=DVAReg.ReadString("SoundsDir"):end sub
+sub OptionsSoundsDirProcess:DVAReg.WriteString("SoundsDir",SoundsDirList.Directory):SoundsDir=SoundsDirList.Directory:end sub
+sub OptionsSourceDir:OptionsSourceDirDlg.Show:end sub
+sub OptionsSourceDirDlgClose:OptionsSourceDirDlg.Close:end sub
+sub OptionsSourceDirProcess:DVAReg.WriteString("SourceDir",SourceDirList.Directory):SourceDir=SourceDirList.Directory:end sub
+sub OptionsDefaultAction
+AssnReg.OpenKey("\DVA.Source\shell",0)
+If AssnReg.ReadString()="Compile" then
+    ActionCompile.Checked=True
+elseif AssnReg.ReadString()="Play" then
+    ActionPlay.Checked=True
+else
+    ActionOpen.Checked=True
+end if
+ActionDlg.ShowModal
+end sub
+sub ProcessActionDlg
+    if ActionOpen.Checked then
+        AssnReg.OpenKey("\MVA.Source\shell",1)
+        AssnReg.WriteString(,"Open")
+        AssnReg.OpenKey("\DVA.Source\shell",1)
+        AssnReg.WriteString(,"Open")
+    elseif ActionPlay.Checked then
+        AssnReg.OpenKey("\MVA.Source\shell",1)
+        AssnReg.WriteString(,"Play")
+        AssnReg.OpenKey("\DVA.Source\shell",1)
+        AssnReg.WriteString(,"Play")
+    elseif ActionCompile.Checked then
+        AssnReg.OpenKey("\MVA.Source\shell",1)
+        AssnReg.WriteString(,"Compile")
+        AssnReg.OpenKey("\DVA.Source\shell",1)
+        AssnReg.WriteString(,"Compile")
+    end if
+end sub
+sub OptionsActionDlgClose:ActionDlg.Close:end sub
+sub OptionsLargeToolbarButtons
+        if OptionsLargeToolbarButtonsMenu.Checked=False then
+            DVAReg.WriteInteger("ToolbarSize",2)
+        else
+            DVAReg.WriteInteger("ToolbarSize",1)
+        end if
+            'CheckToolbars
+    'Toolbar.Paint:Toolbar.Load':Toolbar.Paint
+    'SplitterMoved
+    Showmessage "You will need to restart DVA to update toolbar changes."
+end sub
+sub OptionsFlatToolbarButtons
+    if OptionsFlatToolbarButtonsMenu.Checked=False then
+            DVAReg.WriteInteger("ToolbarFlat",1)
+        else
+            DVAReg.WriteInteger("ToolbarFlat",0)
+        end if
+        'CheckToolbars
+    'Toolbar.Paint:Toolbar.Load':Toolbar.Paint
+    'SplitterMoved
+    Showmessage "You will need to restart DVA to update toolbar changes."
+end sub
+
+SUB EditCopy:  RichEdit.CopyToClipBoard:    END SUB   '' Oh yeah, that was easy
+SUB EditCut:   RichEdit.CutToClipBoard:     END SUB
+SUB EditPaste: RichEdit.PasteFromClipBoard: END SUB
+SUB EditSelectAll: RichEdit.SelectAll:      END SUB
+sub EditClear: RichEdit.SelText="":end sub
+sub RichShowXY:EveryTime:StatusBar.Panel(0).Caption = STR$(RichEdit.WhereY+1)+" : "+STR$(RichEdit.WhereX+1):end sub
+sub ProcessWadViewDblClick:RichEdit.Line(RichEdit.WhereY)= left$(RichEdit.Line(RichEdit.WhereY),RichEdit.WhereX)+WadView.Item(WadView.ItemIndex)+right$(RichEdit.Line(RichEdit.WhereY),len(RichEdit.Line(RichEdit.WhereY))-RichEdit.WhereX)-".wad"-".WAD"-".Wad"-".wAd"-".waD"-".WAd"-".wAD"-".WaD"+chr$(13)+chr$(10):end sub
+sub HelpContents:HelpDummy=HHelp(MainForm.Handle, DVAReg.ReadString("AppDir")+"DVA Help.chm", HH_DISPLAY_TOC,):end sub
+sub HelpIndex:HelpDummy=HHelp(MainForm.Handle, DVAReg.ReadString("AppDir")+"DVA Help.chm", HH_DISPLAY_INDEX,):end sub
+sub HelpAbout:AboutDlg.Show:end sub
+sub HelpAboutClose:AboutDlg.Close:end sub
+
+sub FilePlay
+dim AString as string
+dim BString as string
+SoundsDir=DVAReg.ReadString("SoundsDir")
+dim Count as integer
+for Count=0 to RichEdit.LineCount
+AString=ltrim$(rtrim$(RichEdit.Line(Count)))
+BString=SoundsDir+AString+".wad"
+If AString <> "" and left$(AString,1)<>"/" then PLAYWAV(BString, SND_SYNC)
+next
+end sub
+
+sub AutoPlay
+dim AutoPlayAString as string
+dim AutoPlayBString as string
+SoundsDir=DVAReg.ReadString("SoundsDir")
+dim AutoPlayCount as integer
+for AutoPlayCount=0 to RichEditA.LineCount
+AutoPlayAString=rtrim$(ltrim$(RichEditA.Line(AutoPlayCount)))
+AutoPlayBString=SoundsDir+AutoPlayAString+".wad"
+If AutoPlayAString <> "" and left$(AutoPlayAString,1)<>"/" then PLAYWAV(AutoPlayBString, SND_SYNC)
+next
+end sub
+
+sub FileCompile
+    create CompileSave as qsavedialog
+        Caption="Compile As..."
+        Filter="MS-DOS Batch File (*.BAT)|*.BAT|All Files (*.*)|*.*"
+        FilterIndex=1
+        InitialDir=AppDir
+    end create
+    If CompileSave.Execute then
+        dim CompileFileName as string
+        CompileFileName=CompileSave.Filename
+        if CompileSave.FilterIndex=1 and ucase$(right$(CompileFileName,4)) <> ".BAT" then CompileFileName = CompileFileName + ".bat"
+        dim CountB as integer
+        SoundsDir=DVAReg.ReadString("SoundsDir")
+        dim CompileStream as qfilestream
+        CompileStream.Open(CompileFileName,fmCreate)
+        dim CompileWriteString as string
+        CompileStream.WriteLine("@echo off")
+        CompileStream.WriteLine("echo Compiled DVA File")
+        CompileStream.WriteLine("echo.")
+        CompileStream.WriteLine("echo Compiled in "+AppName)
+        CompileStream.WriteLine("echo Copyright (c) Jonathan Boles 1999-2000")
+        for CountB=0 to RichEdit.LineCount
+            If RichEdit.Line(CountB) <> "" and left$(RichEdit.Line(CountB),1) <> "/" then CompileStream.WriteLine(chr$(34)+AppDir+"wplay.exe"+chr$(34)+" "+chr$(34)+GetShortFileName(SoundsDir+rtrim$(ltrim$(RichEdit.Line(CountB)))+".wad")+chr$(34)+" > nul")
+        next
+        CompileStream.Close
+    end if
+end sub            
+
+sub PromptSave
+    SaveChanges=MessageDlg("Do you want to save changes?",mtWarning,mbYes or mbNo,0)
+    if SaveChanges=mrYes then FileSave
+end sub
+
+sub AutoCompile
+    create AutoCompileSave as qsavedialog
+        Caption="Compile As..."
+        Filter="MS-DOS Batch File (*.BAT)|*.BAT|All Files (*.*)|*.*"
+        FilterIndex=1
+        InitialDir=AppDir
+    end create
+    If AutoCompileSave.Execute then
+        dim AutoCompileFileName as string
+        AutoCompileFileName=AutoCompileSave.Filename
+        if AutoCompileSave.FilterIndex=1 and ucase$(right$(AutoCompileFileName,4)) <> ".BAT" then AutoCompileFileName = AutoCompileFileName + ".bat"
+        dim AutoCompileCountB as integer
+        SoundsDir=DVAReg.ReadString("SoundsDir")
+        dim AutoCompileStream as qfilestream
+        AutoCompileStream.Open(AutoCompileFileName,fmCreate)
+        dim AutoCompileWriteString as string
+        AutoCompileStream.WriteLine("@echo off")
+        AutoCompileStream.WriteLine("echo Compiled DVA File")
+        AutoCompileStream.WriteLine("echo.")
+        AutoCompileStream.WriteLine("echo Compiled in "+AppName)
+        AutoCompileStream.WriteLine("echo Copyright (c) Jonathan Boles 1999-2000")
+        for AutoCompileCountB=0 to RichEditCompile.LineCount
+            If RichEditCompile.Line(AutoCompileCountB) <> "" and left$(RichEditCompile.Line(AutoCompileCountB),1) <> "/" then AutoCompileStream.WriteLine(chr$(34)+AppDir+"wplay.exe"+chr$(34)+" "+chr$(34)+GetShortFileName(SoundsDir+rtrim$(ltrim$(RichEditCompile.Line(AutoCompileCountB)))+".wad")+chr$(34)+" > nul")
+        next
+        AutoCompileStream.Close
+    end if
+end sub   
+
+sub SplitterMoved
+if Toolbar.Visible=True then RichEdit.top=Toolbar.Height+2 else RichEdit.top=0
+RichEdit.left=WadView.Width+2
+RichEdit.width=MainForm.ClientWidth-WadView.Width-2
+RichEdit.Height=MainForm.ClientHeight-RichEdit.Top-19
+Toolbar.Left=WadView.Width+2
+Toolbar.Top=1
+end sub         
+
+sub CheckToolbars
+    if DVAReg.ReadInteger("ToolbarVisible")=0 then
+        flip.visible=False
+        Toolbar.Visible=False
+        ViewToolbarMenu.Checked=False
+    else
+        Flip.Visible=True
+        Toolbar.Visible=True
+        ViewToolbarMenu.Checked=True
+    end if        
+    ClearToolbar
+    If DVAReg.ReadInteger("ToolbarFlat")=0 then
+            Toolbar.Flat=0
+            OptionsFlatToolbarButtonsMenu.Checked=False
+      elseif DVAReg.ReadInteger("ToolbarSize")=1 then
+            Toolbar.Flat=1
+            OptionsFlatToolbarButtonsMenu.Checked=True
+      Else:end if
+If DVAReg.ReadInteger("ToolbarSize")=2 then
+            Toolbar.imglHandle=Limgs.handle
+		Toolbar.imglDHandle=LimgsD.handle
+		OptionsLargeToolbarButtonsMenu.Checked=True
+            
+	elseif DVAReg.ReadInteger("ToolbarSize")=1 then
+		Toolbar.imglHandle=Simgs.handle
+		Toolbar.imglDHandle=SimgsD.handle
+		OptionsLargeToolbarButtonsMenu.Checked=False
+            
+	else:end if
+end sub
+
+sub ClearToolbar
+    with Toolbar
+        ButtonX=
+        ShowHint=           
+        Flat=               'Flat buttons or not
+   imglHandle=       'Handle 
+   imglDHandle=      'Handel 2
+
+'Private
+   imgl1=         'Active buttton
+   imgl2=         'Disabel button
+   img=              'on paint Buttons 
+   Butbmp=           'our False button
+   CButton=         ' one real button
+   Buttons=          'Number of buttons
+   X=                'Height of bmp
+   Y=  
+end sub
+
+sub ToolbarClick
+    select case Toolbar.ButtonX
+        case 0:FileNew
+        case 1:FileOpen
+        case 2:FileSave
+        case 3:HelpContents
+    end select
+    Toolbar.Reset
+end sub
+
+sub CheckWordWrap
+    if DVAReg.ReadInteger("WordWrap")=0 then
+        ViewWordWrapMenu.Checked=False
+        RichEdit.WordWrap=False
+    else
+        ViewWordWrapMenu.Checked=True
+        RichEdit.WordWrap=True
+    end if
+end sub

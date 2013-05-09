@@ -1,0 +1,47 @@
+; This file is maintained by HCW. Do not modify this file directly.
+
+[OPTIONS]
+LCID=0xc09 0x0 0x0 ; English (Australian)
+REPORT=Yes
+OPTCDROM=1
+TITLE=DVA Help
+CNT=dva.cnt
+COPYRIGHT=Copyright © 1999-2001 Jonathan Boles
+BUILD=BuildAll
+BMROOT=common
+HLP=DVA Help.hlp
+
+[FILES]
+DVA Help.rtf
+
+[BUILDTAGS]
+BuildAll
+
+[WINDOWS]
+MAIN="",,0,,(r12632256)
+Window1="",(64,64,832,832),0,,(r12632256)
+Window2="",(0,0,1023,511),0,,(r12632256)
+Window3="",(0,511,1023,511),0,,(r12632256)
+Window4="Glossary",(0,0,511,1023),0,,(r12632256)
+Window5="Index",(511,0,511,1023),0,,(r12632256)
+
+[CONFIG]
+RegisterRoutine("MMSYSTEM","sndPlaySound","Si")
+RegisterRoutine("MMSYSTEM","mciExecute","S")
+BrowseButtons()
+
+[BAGGAGE]
+common\appearancedlg.bmp
+common\editmenu.bmp
+common\filemenu.bmp
+common\finddlg.bmp
+common\helpmenu.bmp
+common\locationsdlg.bmp
+common\nfdlg.bmp
+common\optionsmenu.bmp
+common\propdlg.bmp
+common\replacedlg.bmp
+common\savechangesdlg.bmp
+common\searchmenu.bmp
+common\shelldlg.bmp
+common\viewmenu.bmp

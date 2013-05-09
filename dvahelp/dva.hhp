@@ -1,0 +1,58 @@
+[OPTIONS]
+Compatibility=1.1 or later
+Compiled file=..\dva\help\DVA Help.chm
+Contents file=dva.hhc
+Default Window=NewWin
+Default topic=about.htm
+Display compile progress=Yes
+Full-text search=Yes
+Language=0xc09 English (Australian)
+Title=DVA Help
+
+[WINDOWS]
+NewWin="DVA Help","dva.hhc",,"introduction.htm","introduction.htm",,"DVA Online","about.htm","About DVA",0x23520,,0x8307e,[70,46,696,506],0x1000000,,,,,,0
+
+
+[FILES]
+about.htm
+editmenu.htm
+filemenu.htm
+optionsmenu.htm
+searchmenu.htm
+menus.htm
+helpmenu.htm
+forward.htm
+overview.htm
+newfeatures.htm
+operations.htm
+keyboard.htm
+introduction.htm
+openafile.htm
+createafile.htm
+saveafile.htm
+compileafile.htm
+playafile.htm
+changeoptions.htm
+procs.htm
+filetypes.htm
+creation.htm
+techinfo.htm
+printafile.htm
+versionhistory.htm
+viewmenu.htm
+finddlg.htm
+nfdlg.htm
+propdlg.htm
+replacedlg.htm
+savechangesdlg.htm
+preferencesdlg.htm
+dlgreference.htm
+shelldlg.htm
+locationsdlg.htm
+appearancedlg.htm
+licenseagreement.htm
+legaldetritus.htm
+copyrightnotice.htm
+
+[INFOTYPES]
+
