@@ -670,7 +670,7 @@ sub AutoCompile
     '    AutoCompileStream.WriteLine("echo Compiled in "+AppName)
     '    AutoCompileStream.WriteLine("echo Copyright (c) Jonathan Boles 1999-2000")
     '    for AutoCompileCountB=0 to RichEditCompile.LineCount
-    '        If RichEditCompile.Line(AutoCompileCountB) <> "" and left$(RichEditCompile.Line(AutoCompileCountB),1) <> "/" then AutoCompileStream.WriteLine(chr$(34)+AppDir+"wplay.exe"+chr$(34)+" "+chr$(34)+GetShortFileName(SoundsDir+rtrim$(ltrim$(RichEditCompile.Line(AutoCompileCountB)))+".wad")+chr$(34)+" > nul")
+    '        If RichEditCompile.Line(AutoCompileCountB) <> "" and left$(RichEditCompile.Line(AutoCompileCountB),1) <> "/" then AutoCompileStream.WriteLine(qt+AppDir+"sounder.exe"+qt+" "+qt+SoundsDir+rtrim$(ltrim$(RichEditCompile.Line(AutoCompileCountB)))+".wad"+qt+" > nul")
     '    next
     '    AutoCompileStream.Close
     'end if

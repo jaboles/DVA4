@@ -169,8 +169,12 @@ sub FileCompile
         CompileStream.WriteLine("echo.")
         CompileStream.WriteLine("echo Compiled in "+AppName)
         CompileStream.WriteLine("echo Copyright (c) Jonathan Boles 1999-"+right$(date$,4))
+        CompileStream.WriteLine("echo.")
         for CountB=0 to RichEdit.LineCount
-            If RichEdit.Line(CountB) <> "" and left$(RichEdit.Line(CountB),1) <> "/" then CompileStream.WriteLine(chr$(34)+AppDir+"wplay.exe"+chr$(34)+" "+chr$(34)+GetShortFileName(SoundsDir+rtrim$(ltrim$(RichEdit.Line(CountB)))+".wad")+chr$(34)+" > nul")
+            If RichEdit.Line(CountB) <> "" and left$(RichEdit.Line(CountB),1) <> "/" Then
+                CompileStream.WriteLine("echo " + rtrim$(ltrim$(RichEdit.Line(CountB))))
+                CompileStream.WriteLine(qt+AppDir+"sounder.exe"+qt+" "+qt+SoundsDir+rtrim$(ltrim$(RichEdit.Line(CountB)))+".wad"+qt+" > nul")
+            End If
         next
         CompileStream.Close
      else
