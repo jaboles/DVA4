@@ -1,23 +1,27 @@
-@echo off
-echo Compiling HLP Help File...
-start /wait /m j:\HLP\Winhelp4\Source\BuildHelp.bat"
-echo Done!
-echo.
+pushd %~dp0%
+rem @echo off
+rem echo Compiling HLP Help File...
+rem j:\HLP\Winhelp4\Source\BuildHelp.bat"
+rem echo Done!
+rem echo.
 echo Compiling CHM Help File...
-start /wait /m "d:\program files\html help workshop\hhc.exe" "j:\dvahelp\dva.hhp" > nul
+start /wait "Build CHM Help" "%programfiles(x86)%\html help workshop\hhc.exe" ".\dvahelp > htmlhelp.out.txt
 echo Done!
 echo.
 echo Compiling Executable...
-start /wait /m "d:\rq\rc.exe" "j:\dva\dva.rqb" > nul
+pushd dva
+start /wait "Compile" "c:\rapidq\rc.exe" -Lc:\rapidq\lib ".\dva.rqb" > ..\compile.out.txt
+popd
 echo Done!
 echo.
 echo Updating Version Information...
-start /wait /m "j:\dva\build.exe"
+start /wait "Update version" ".\dva\build.exe" > updateversion.out.txt
 echo Done!
 echo.
 echo Compiling Setup...
-start /wait /m "d:\Program Files\Inno Setup 2\iscc.exe" "j:\dva.iss" > nul
+start /wait "Build setup" "%programfiles(x86)%\Inno Setup 5\iscc.exe" ".\dva.iss" > setupbuild.out.txt
 echo Done!
 echo.
-start "j:\dvabackup.set"
-cls
+popd
+rem start "j:\dvabackup.set"
+rem cls
