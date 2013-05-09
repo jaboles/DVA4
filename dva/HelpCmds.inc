@@ -1,9 +1,9 @@
 sub HelpContents
-    HelpDummy=HHelp(MainForm.Handle, DVAReg.ReadString("AppDir")+"help\DVA Help.chm", HH_DISPLAY_TOC,)
+    HelpDummy=HHelp(MainForm.Handle, AppDir+"help\DVA Help.chm", HH_DISPLAY_TOC,)
 end sub
 
 sub HelpIndex
-    HelpDummy=HHelp(MainForm.Handle, DVAReg.ReadString("AppDir")+"help\DVA Help.chm", HH_DISPLAY_INDEX,)
+    HelpDummy=HHelp(MainForm.Handle, AppDir+"help\DVA Help.chm", HH_DISPLAY_INDEX,)
 end sub
 
 sub HelpAbout

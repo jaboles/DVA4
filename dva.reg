@@ -1,23 +1,14 @@
 REGEDIT4
 
 [HKEY_CURRENT_USER\Software\DVA]
-;"AppDir"="c:\\downloads\\dvadev\\dva\\"
-"AppDir"="D:\\Datafile0\\Archive\\Soft Dev\\dva\\DVADev\\dva\\"
-"SoundsDir"="c:\\downloads\\dvadev\\DVA\\SOUNDS\\"
-"SourceDir"="c:\\downloads\\dvadev\\DVA\\SOURCES\\"
-"AppName"="DVA"
 "AppVer"="v0.40b"
 "PrintOutput"="LPT1:"
 "ToolbarSize"=dword:00000000
 "ToolbarFlat"=dword:00000001
-"ContactEmail"="jaboles@crosswinds.net"
 "ToolbarVisible"=dword:00000001
 "WordWrap"=dword:00000001
 "SplashScreen"=dword:00000001
-"RootSoundsDir"="c:\\downloads\\dvadev\\dva\\sounds\\"
 "AppBuild"=dword:0000002a
-"Website"="go.to/dvaonline"
-"BetaTesters"="Winston Yang, Maikha 'V' Ly, Albert Alcoceba"
 "FontName"="System"
 "FontSize"=dword:0000000e
 "StartupSound"=dword:00000001
@@ -30,5 +21,4 @@ REGEDIT4
 "OptionsPreferencesDlgLeft"=dword:000000b7
 "OptionsPreferencesDlgTop"=dword:000000c4
 "FullScreen"=dword:00000000
-"SoundCopyright"="Glenn Jackson-Bethell, Paul McCabe and Winston Yang"
 

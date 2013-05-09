@@ -30,7 +30,7 @@ sub FileOpen
         caption="Open..."
         filter="DVA File (*.DVA)|*.DVA|MVA File (*.MVA)|*.MVA|All Files (*.*)|*.*"
         filterindex=1
-        initialdir=DVAReg.ReadString("SourceDir")
+        initialdir=AppDir+"Sources\"
     end create
     if OpenDialog.Execute then
         PromptSave
@@ -72,7 +72,7 @@ sub FileSaveAs
         caption="Save As..."
         filter="DVA File (*.DVA)|*.DVA|MVA File (*.MVA)|*.MVA|All Files (*.*)|*.*"
         filterindex=1
-        initialdir=DVAReg.ReadString("SourceDir")
+        initialdir=AppDir+"Sources\"
     end create
     if SaveDialog.Execute then
         SetStatus("Busy","Saving File")
@@ -125,10 +125,10 @@ SetStatus("Busy","Playing File")
 dim AString as string
 dim BString as string
 if FileEnhanced=True and len(dfDefaultDir) then
-    SoundsDir=DVAReg.ReadString("RootSoundsDir")+dfDefaultDir
+    SoundsDir=AppDir+"Sounds\"+dfDefaultDir
     if right$(SoundsDir,1) <> "\" then SoundsDir=SoundsDir+"\"
 else
-    SoundsDir=DVAReg.ReadString("SoundsDir")
+    SoundsDir=AppDir+"Sounds\"
 end if
 dim Count as integer
 for Count=0 to RichEdit.LineCount
@@ -162,10 +162,10 @@ sub FileCompile
      if Compilesave.FilterIndex=2 then
         if  lcase$(right$(CompileFileName,4)) <> ".bat" then CompileFileName = CompileFileName + ".bat"
         if FileEnhanced=True and len(dfDefaultDir) then
-            SoundsDir=DVAReg.ReadString("RootSoundsDir")+dfDefaultDir
+            SoundsDir=AppDir+"Sounds\"+dfDefaultDir
             if right$(SoundsDir,1) <> "\" then SoundsDir=SoundsDir+"\"
         else
-            SoundsDir=DVAReg.ReadString("SoundsDir")
+            SoundsDir=AppDir+"Sounds\"
         end if
         CompileStream.Open(CompileFileName,fmCreate)
         CompileStream.WriteLine("@echo off")
@@ -180,10 +180,10 @@ sub FileCompile
      else
         if lcase$(right$(CompileFileName,4)) <> ".exe" then CompileFileName = CompileFileName + ".exe"
         if FileEnhanced=True and len(dfDefaultDir) then
-            SoundsDir=DVAReg.ReadString("RootSoundsDir")+dfDefaultDir
+            SoundsDir=AppDir+"Sounds\"+dfDefaultDir
             if right$(SoundsDir,1) <> "\" then SoundsDir=SoundsDir+"\"
         else
-            SoundsDir=DVAReg.ReadString("SoundsDir")
+            SoundsDir=AppDir+"Sounds\"
         end if
         
         dim CompileBinary as string, CompileIconPath as string, CompileLibPath as string, CompileInput as string, CompileOutput as string, CompileBinLib as string
@@ -281,7 +281,7 @@ end sub
 sub FileCheckForUpdate
     PromptSave
     SetStatus("Busy","Preparing to check for update")
-    run DVAReg.ReadString("AppDir")+"update.exe"
+    run AppDir+"update.exe"
     Application.Terminate
 end sub
 

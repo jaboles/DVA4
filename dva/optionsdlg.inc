@@ -1,8 +1,8 @@
 Create OptionsPrefTreeViewImages as qimagelist
-AddICOFile DVAReg.ReadString("AppDir")+"images\options.ico"
-AddICOFile DVAReg.ReadString("AppDir")+"images\locations.ico"
-AddICOFile DVAReg.ReadString("AppDir")+"images\appearance.ico"
-AddICOFile DVAReg.ReadString("AppDir")+"images\shell.ico"
+AddICOFile AppDir+"images\options.ico"
+AddICOFile AppDir+"images\locations.ico"
+AddICOFile AppDir+"images\appearance.ico"
+AddICOFile AppDir+"images\shell.ico"
 end create
 CREATE OptionsPreferencesDlg AS QFORM
     Caption = "Preferences"
@@ -75,7 +75,7 @@ create OptionsPage as qpanel:BevelOuter=bvNone:Visible=False:Left=228:Top=28:Wid
 '--------------------- Directories Panel
 create OptionsLocationsPage as qpanel
         BevelOuter=bvNone:Visible=False:Left=228:Top=28:Width=410:Height=280:Parent=OptionsPreferencesDlg
-        create OptionsLocationsPicture as qimage:ICOn=DVAReg.ReadString("AppDir")+"images\locations.ico":end create
+        create OptionsLocationsPicture as qimage:ICOn=AppDir+"images\locations.ico":end create
         create OptionsLocationsPageHeader as qlabel:font=OptionsPageHeaderFont:caption="Locations":top=5:left=41:end create
         create OptionsLocationsSoundsDirTreeHeader as qlabel:top=58:left=1:caption="Please select the sounds directory...":end create 
         CREATE OptionsLocationsSoundsDirTree AS Qdirtree:Left = 1:Top = 73:Width = 190:Height = 137:ReadOnly=True:END CREATE
@@ -88,7 +88,7 @@ end create
 showmessage
 create OptionsAppearancePage as qpanel
         BevelOuter=bvNone:Visible=False:Left=228:Top=28:Width=410:Height=280:Parent=OptionsPreferencesDlg
-        create OptionsAppearancePicture as qimage:ICOn=DVAReg.ReadString("AppDir")+"images\appearance.ico":end create
+        create OptionsAppearancePicture as qimage:ICOn=AppDir+"images\appearance.ico":end create
         create OptionsAppearancePageHeader as qlabel:font=OptionsPageHeaderFont:caption="Appearance":top=5:left=41:end create
         create OptionsAppearanceSplashScreenOnStartup as qcheckbox:top=55:left=1:width=200:caption="Show splash screen on startup":end create
         create OptionsAppearanceToolbar as qcheckbox:top=80:left=1:width=200:caption="Show toolbar":onclick=OptionsAppearanceToolbarChanged:end create
@@ -103,7 +103,7 @@ end create
 '--------------------- Shell Panel
 create OptionsShellPage as qpanel
         BevelOuter=bvNone:Visible=False:Left=228:Top=28:Width=410:Height=280:Parent=OptionsPreferencesDlg
-        create OptionsShellPicture as qimage:ICOn=DVAReg.ReadString("AppDir")+"images\shell.ico":end create
+        create OptionsShellPicture as qimage:ICOn=AppDir+"images\shell.ico":end create
         create OptionsShellPageHeader as qlabel:font=OptionsPageHeaderFont:caption="Shell":top=5:left=41:end create
         CREATE OptionsShellActionHeader AS QLABEL:Caption = "Default Shell Action:":Left = 0:Top = 46:Width = 176:END CREATE
         CREATE OptionsShellActionOpen AS QRADIOBUTTON:Caption = "Open file for editing.":Left = 32:Top = 70:END CREATE
@@ -189,8 +189,8 @@ end sub
 '----------------------- LoadOptions Code
 sub LoadOptions
 SetStatus("Busy","Retrieving Options")
-OptionsLocationsSoundsDirTree.Directory=DVAReg.ReadString("SoundsDir")
-OptionsLocationsSourcesDirTree.Directory=DVAReg.ReadString("SourceDir")
+OptionsLocationsSoundsDirTree.Directory=AppDir+"Sounds\"
+OptionsLocationsSourcesDirTree.Directory=AppDir+"Sources\"
 OptionsLocationsPrintOutputEdit.Text=DVAReg.ReadString("PrintOutput")
 OptionsAppearanceSplashScreenOnStartup.Checked=DVAReg.ReadInteger("SplashScreen")
 OptionsAppearanceToolbar.Checked=DVAReg.ReadInteger("ToolbarVisible")

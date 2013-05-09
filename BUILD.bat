@@ -10,6 +10,7 @@ echo Done!
 echo.
 echo Compiling Executable...
 pushd dva
+start /wait "Compile" "c:\rapidq\rc.exe" -Lc:\rapidq\lib ".\build.rqb" > ..\compile2.out.txt
 start /wait "Compile" "c:\rapidq\rc.exe" -Lc:\rapidq\lib ".\dva.rqb" > ..\compile.out.txt
 popd
 echo Done!

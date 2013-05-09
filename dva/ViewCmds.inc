@@ -1,6 +1,6 @@
 sub ViewRefresh
     SetStatus("Busy","Refreshing File List")
-    WadView.Directory=DVAReg.ReadString("SoundsDir")
+    WadView.Directory=AppDir+"Sounds\"
     WadView.Update:SetStatus("Ready",)
 end sub
 

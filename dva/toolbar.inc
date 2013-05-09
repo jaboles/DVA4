@@ -11,7 +11,7 @@ const btnPrefs  = 9
 const btnHelp   = 10
 
 dim ImageDir as string
-ImageDir=DVAReg.ReadString("AppDir")+"images\"
+ImageDir=AppDir + "images\"
 '-------------------small buttons-----------------------------------
 Dim Sbmp as QBitmap                    'For get Height and Width
    Sbmp.bmp = ImageDir+"snew.bmp"

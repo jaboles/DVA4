@@ -79,7 +79,7 @@ $include "tflipbook.inc"
 dim AppVer as string, AppName as string, AppBuild as string
 AppVer=DVAReg.ReadString("AppVer")
 AppBuild=str$(DVAReg.ReadInteger("AppBuild"))
-AppName=DVAReg.ReadString("AppName")+" "+AppVer
+AppName="DVA "+AppVer
 
 
 dim Filename as string:Filename="Untitled.dva"

@@ -147,22 +147,14 @@ Name: {group}\Readme for DVA; Filename: {app}\help\readme.hlp; IconIndex: 0; Com
 Name: {group}\Uninstall DVA; Filename: {uninstallexe}; IconIndex: 0
 
 [Registry]
-Root: HKCU; Subkey: Software\DVA; ValueType: string; ValueName: AppDir; ValueData: {app}\
-Root: HKCU; Subkey: Software\DVA; ValueType: string; ValueName: SoundsDir; ValueData: {app}\Sounds\
-Root: HKCU; Subkey: Software\DVA; ValueType: string; ValueName: SourceDir; ValueData: {app}\Sources\
-Root: HKCU; Subkey: Software\DVA; ValueType: string; ValueName: AppName; ValueData: DVA
 Root: HKCU; Subkey: Software\DVA; ValueType: string; ValueName: AppVer; ValueData: v0.40b
 Root: HKCU; Subkey: Software\DVA; ValueType: string; ValueName: PrintOutput; ValueData: LPT1:
 Root: HKCU; Subkey: Software\DVA; ValueType: dword; ValueName: ToolbarSize; ValueData: 1
 Root: HKCU; Subkey: Software\DVA; ValueType: dword; ValueName: ToolbarFlat; ValueData: 1
-Root: HKCU; Subkey: Software\DVA; ValueType: string; ValueName: ContactEmail; ValueData: jaboles@crosswinds.net
 Root: HKCU; Subkey: Software\DVA; ValueType: dword; ValueName: ToolbarVisible; ValueData: 1
 Root: HKCU; Subkey: Software\DVA; ValueType: dword; ValueName: WordWrap; ValueData: 1
 Root: HKCU; Subkey: Software\DVA; ValueType: dword; ValueName: SplashScreen; ValueData: 1
-Root: HKCU; Subkey: Software\DVA; ValueType: string; ValueName: RootSoundsDir; ValueData: {app}\Sounds\
-Root: HKCU; Subkey: Software\DVA; ValueType: dword; ValueName: AppBuild; ValueData: 47; Components: Core_Program_Files
-Root: HKCU; Subkey: Software\DVA; ValueType: string; ValueName: Website; ValueData: go.to/dvaonline
-Root: HKCU; Subkey: Software\DVA; ValueType: string; ValueName: BetaTesters; ValueData: Winston Yang, Maikha 'V' Ly, Albert Alcoceba
+Root: HKCU; Subkey: Software\DVA; ValueType: dword; ValueName: AppBuild; ValueData: 69
 Root: HKCU; Subkey: Software\DVA; ValueType: string; ValueName: FontName; ValueData: System
 Root: HKCU; Subkey: Software\DVA; ValueType: dword; ValueName: FontSize; ValueData: 14
 Root: HKCU; Subkey: Software\DVA; ValueType: dword; ValueName: StartupSound; ValueData: 1
@@ -175,7 +167,6 @@ Root: HKCU; Subkey: Software\DVA; ValueType: dword; ValueName: MainFormHeight; V
 Root: HKCU; Subkey: Software\DVA; ValueType: dword; ValueName: OptionsPreferencesDlgLeft; ValueData: 0
 Root: HKCU; Subkey: Software\DVA; ValueType: dword; ValueName: OptionsPreferencesDlgTop; ValueData: 0
 Root: HKCU; Subkey: Software\DVA; ValueType: dword; ValueName: FullScreen; ValueData: 0
-Root: HKCU; Subkey: Software\DVA; ValueType: string; ValueName: SoundCopyright; ValueData: Glenn Jackson-Bethell, Paul McCabe and Winston Yang
 
 [Run]
 Filename: {app}\dva.exe; Parameters: reg; StatusMsg: Updating registry settings.

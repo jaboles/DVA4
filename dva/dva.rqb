@@ -3,6 +3,8 @@ $option icon "dva.ico"
 Const cr=CHR$(13)+chr$(10)
 CONST Header="DVA00.41"
 const qt=chr$(34)
+DIM AppDir AS STRING
+AppDir = Command$(0) - "dva.exe"
 
 
 CONST GWL_WNDPROC = -4
@@ -240,11 +242,10 @@ create EditFont as qfont
     'Color=DVAReg.ReadInteger("FontColour")
 end create
 
-dim AppVer as string, AppName as string, AppBuild as string, AppDir as string
+dim AppVer as string, AppName as string, AppBuild as string
 AppVer=DVAReg.ReadString("AppVer")
 AppBuild=str$(DVAReg.ReadInteger("AppBuild"))
-AppName=DVAReg.ReadString("AppName")+" "+AppVer
-AppDir=DVAReg.ReadString("AppDir")
+AppName="DVA "+AppVer
 
 dim CurrentFile as DVAFile0040
 dim TestStream as qfilestream
@@ -439,7 +440,7 @@ StartProgress.Position=10
         top=50
         Width=200
         height=Parent.ClientHeight-100
-        Directory=DVAReg.ReadString("SoundsDir")
+        Directory=AppDir+"Sounds\"
         OnDblClick=ProcessWadViewDblClick
     end create
     create RichEdit as qrichedit
@@ -555,7 +556,7 @@ RichShowXY
 
 
 'create MenuPic as qbitmap
-'    BMP=DVAReg.ReadString("AppDir")+"images\menupic.bmp"
+'    BMP=AppDir+"images\menupic.bmp"
 'end create
 '
 'dim MenuPicHandle as long
@@ -627,10 +628,10 @@ sub AutoPlay
 dim AutoPlayAString as string
 dim AutoPlayBString as string
 if FileEnhanced=True and len(dfDefaultDir) then
-    SoundsDir=DVAReg.ReadString("RootSoundsDir")+dfDefaultDir
+    SoundsDir=AppDir+"Sounds\"+dfDefaultDir
     if right$(SoundsDir,1) <> "\" then SoundsDir=SoundsDir+"\"
 else
-    SoundsDir=DVAReg.ReadString("SoundsDir")
+    SoundsDir=AppDir+"Sounds\"
 end if
 dim AutoPlayCount as integer
 for AutoPlayCount=0 to RichEditA.LineCount
@@ -662,7 +663,7 @@ sub AutoCompile
     '    AutoCompileFileName=AutoCompileSave.Filename
     '    if AutoCompileSave.FilterIndex=1 and ucase$(right$(AutoCompileFileName,4)) <> ".BAT" then AutoCompileFileName = AutoCompileFileName + ".bat"
     '    dim AutoCompileCountB as integer
-    '    SoundsDir=DVAReg.ReadString("SoundsDir")
+    '    SoundsDir=AppDir+"Sounds\"
     '    dim AutoCompileStream as qfilestream
     '    AutoCompileStream.Open(AutoCompileFileName,fmCreate)
     '    dim AutoCompileWriteString as string
@@ -923,7 +924,7 @@ If DVAReg.ReadInteger("SplashScreen")=True then
     AboutDlg.Show
     AboutDlg.Repaint
 end if
-if DVAReg.ReadInteger("StartupSound")=True then Playwav DVAReg.ReadString("RootSoundsDir")+"start.wav",SND_ASYNC
+if DVAReg.ReadInteger("StartupSound")=True then Playwav AppDir+"start.wav",SND_ASYNC
 SplashTimer.Interval=3000
 SplashTimer.OnTimer=CloseSplashForm
 end sub
